@@ -16,6 +16,25 @@
   comments: "较好明确了毕业设计的计划和目标，研究课题具有较好的现实意义，制定了可行的实施方案，正确评估了研究过程中可能遇到的问题和相应的解决方案，文献调研充分，同意开题。"
 )
 
+#show math.equation: set text(font: "TeX Gyre Termes Math")
+
+// #let continuous_table = state("continuous_table")
+// #set table(stroke: (x, y) => {
+//   if y == 0 {none} else {1pt}
+// })
+// #show table: it => continuous_table.update(false) + it
+
+#show figure: it => {
+    set text(size: 10.5pt)
+    it
+    v(-1em)
+    box()
+}
+#show figure.where(kind: table): it => [
+  #set figure.caption(position: top)
+  #it
+]
+
 // We generated the example code below so you can see how
 // your document will look. Go ahead and replace it with
 // your own content!
