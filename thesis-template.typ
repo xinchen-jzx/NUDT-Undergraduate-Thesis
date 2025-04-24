@@ -197,10 +197,16 @@
   // align(center)[#text(size: 16pt, font: hei)[摘#h(1em)要]]
   heading([摘#h(1em)要], level: 6)
   v(16pt)
-  text(font: song, size: 12pt)[摘要内容。]
+  text(font: song, size: 12pt)[
+      随着AI技术逐渐渗透到各大应用场景，市场对算力的需求呈现爆发式增长。
+
+      因此本研究致力于解决上述难题，主要研究了
+
+      通过测试表明，本文实现的编译器能够将应用算子自动映射到具有不同IP设计的加速部件，根据不同芯片架构特征生成正确的指令流来协调各个计算部件，挖掘芯片内部的计算并行性。
+  ]
   v(0pt)
   text(font: hei, size: 12pt)[关键词：]
-  text(font: song, size: 12pt)[关键词1；关键词2；关键词3]
+  text(font: song, size: 12pt)[深度神经网络；编译；调度器；存算一体]
 
   pagebreak()
   set page(footer: context [
