@@ -30,13 +30,9 @@
 }
 
 @misc{XLA23,
-  title={Operator Fusion in XLA: Analysis and Evaluation}, 
-  author={Daniel Snider and Ruofan Liang},
-  year={2023},
-  eprint={2301.13062},
-  archivePrefix={arXiv},
-  primaryClass={cs.LG},
-  url={https://arxiv.org/abs/2301.13062}, 
+  title	= {XLA : Compiling Machine Learning for Peak Performance},
+  author	= {Amit Sabne},
+  year	= {2020}
 }
 
 @inproceedings{AKG21,
@@ -46,7 +42,140 @@
   year={2021},
 }
 
-@misc{IREE,
+@misc{IREE19,
   title = {iree},
   publisher = {https://github.com/iree-org/iree},
+}
+
+@inproceedings{RelayIR18,
+  author = {Roesch, Jared and Lyubomirsky, Steven and Weber, Logan and Pollock, Josh and Kirisame, Marisa and Chen, Tianqi and Tatlock, Zachary},
+  title = {Relay: a new IR for machine learning frameworks},
+  year = {2018},
+  isbn = {9781450358347},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  url = {https://doi.org/10.1145/3211346.3211348},
+  doi = {10.1145/3211346.3211348},
+  abstract = {Machine learning powers diverse services in industry including search, translation, recommendation systems, and security. The scale and importance of these models require that they be efficient, expressive, and portable across an array of heterogeneous hardware devices. These constraints are often at odds; in order to better accommodate them we propose a new high-level intermediate representation (IR) called Relay. Relay is being designed as a purely-functional, statically-typed language with the goal of balancing efficient compilation, expressiveness, and portability. We discuss the goals of Relay and highlight its important design constraints. Our prototype is part of the open source NNVM compiler framework, which powers Amazon's deep learning framework MxNet.},
+  booktitle = {Proceedings of the 2nd ACM SIGPLAN International Workshop on Machine Learning and Programming Languages},
+  pages = {58–68},
+  numpages = {11},
+  keywords = {machine learning, intermediate representation, differentiable programming, compilers},
+  location = {Philadelphia, PA, USA},
+  series = {MAPL 2018}
+}
+
+@inproceedings{TensorIR23,
+  author = {Feng, Siyuan and Hou, Bohan and Jin, Hongyi and Lin, Wuwei and Shao, Junru and Lai, Ruihang and Ye, Zihao and Zheng, Lianmin and Yu, Cody Hao and Yu, Yong and Chen, Tianqi},
+  title = {TensorIR: An Abstraction for Automatic Tensorized Program Optimization},
+  year = {2023},
+  isbn = {9781450399166},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  url = {https://doi.org/10.1145/3575693.3576933},
+  doi = {10.1145/3575693.3576933},
+  abstract = {Deploying deep learning models on various devices has become an important topic. The wave of hardware specialization brings a diverse set of acceleration primitives for multi-dimensional ten- sor computations. These new acceleration primitives, along with the emerging machine learning models, bring tremendous engineering challenges. In this paper, we present TensorIR, a compiler abstraction for optimizing programs with these tensor computation primitives. TensorIR generalizes the loop nest representation used in existing machine learning compilers to bring tensor computation as the first-class citizen. Finally, we build an end-to-end framework on top of our abstraction to automatically optimize deep learning models for given tensor computation primitives. Experimental results show that TensorIR compilation automatically uses the tensor computation primitives for given hardware backends and delivers performance that is competitive to state-of-art hand-optimized systems across platforms.},
+  booktitle = {Proceedings of the 28th ACM International Conference on Architectural Support for Programming Languages and Operating Systems, Volume 2},
+  pages = {804–817},
+  numpages = {14},
+  keywords = {Tensor Computation, Machine Learning Compiler, Deep Neural Network},
+  location = {Vancouver, BC, Canada},
+  series = {ASPLOS 2023}
+}
+
+@article{DianNao16,
+  author = {Chen, Yunji and Chen, Tianshi and Xu, Zhiwei and Sun, Ninghui and Temam, Olivier},
+  title = {DianNao family: energy-efficient hardware accelerators for machine learning},
+  year = {2016},
+  issue_date = {November 2016},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  volume = {59},
+  number = {11},
+  issn = {0001-0782},
+  url = {https://doi.org/10.1145/2996864},
+  doi = {10.1145/2996864},
+  abstract = {Machine Learning (ML) tasks are becoming pervasive in a broad range of applications, and in a broad range of systems (from embedded systems to data centers). As computer architectures evolve toward heterogeneous multi-cores composed of a mix of cores and hardware accelerators, designing hardware accelerators for ML techniques can simultaneously achieve high efficiency and broad application scope.While efficient computational primitives are important for a hardware accelerator, inefficient memory transfers can potentially void the throughput, energy, or cost advantages of accelerators, that is, an Amdahl's law effect, and thus, they should become a first-order concern, just like in processors, rather than an element factored in accelerator design on a second step. In this article, we introduce a series of hardware accelerators (i.e., the DianNao family) designed for ML (especially neural networks), with a special emphasis on the impact of memory on accelerator design, performance, and energy. We show that, on a number of representative neural network layers, it is possible to achieve a speedup of 450.65x over a GPU, and reduce the energy by 150.31x on average for a 64-chip DaDianNao system (a member of the DianNao family).<!-- END_PAGE_1 -->},
+  journal = {Commun. ACM},
+  month = oct,
+  pages = {105–112},
+  numpages = {8}
+}
+
+@inproceedings{TPU16,
+  author = {Jouppi, Norman P. and Young, Cliff and Patil, Nishant and Patterson, David and Agrawal, Gaurav and Bajwa, Raminder and Bates, Sarah and Bhatia, Suresh and Boden, Nan and Borchers, Al and Boyle, Rick and Cantin, Pierre-luc and Chao, Clifford and Clark, Chris and Coriell, Jeremy and Daley, Mike and Dau, Matt and Dean, Jeffrey and Gelb, Ben and Ghaemmaghami, Tara Vazir and Gottipati, Rajendra and Gulland, William and Hagmann, Robert and Ho, C. Richard and Hogberg, Doug and Hu, John and Hundt, Robert and Hurt, Dan and Ibarz, Julian and Jaffey, Aaron and Jaworski, Alek and Kaplan, Alexander and Khaitan, Harshit and Killebrew, Daniel and Koch, Andy and Kumar, Naveen and Lacy, Steve and Laudon, James and Law, James and Le, Diemthu and Leary, Chris and Liu, Zhuyuan and Lucke, Kyle and Lundin, Alan and MacKean, Gordon and Maggiore, Adriana and Mahony, Maire and Miller, Kieran and Nagarajan, Rahul and Narayanaswami, Ravi and Ni, Ray and Nix, Kathy and Norrie, Thomas and Omernick, Mark and Penukonda, Narayana and Phelps, Andy and Ross, Jonathan and Ross, Matt and Salek, Amir and Samadiani, Emad and Severn, Chris and Sizikov, Gregory and Snelham, Matthew and Souter, Jed and Steinberg, Dan and Swing, Andy and Tan, Mercedes and Thorson, Gregory and Tian, Bo and Toma, Horia and Tuttle, Erick and Vasudevan, Vijay and Walter, Richard and Wang, Walter and Wilcox, Eric and Yoon, Doe Hyun},
+  title = {In-Datacenter Performance Analysis of a Tensor Processing Unit},
+  year = {2017},
+  isbn = {9781450348928},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  url = {https://doi.org/10.1145/3079856.3080246},
+  doi = {10.1145/3079856.3080246},
+  abstract = {Many architects believe that major improvements in cost-energy-performance must now come from domain-specific hardware. This paper evaluates a custom ASIC---called a Tensor Processing Unit (TPU) --- deployed in datacenters since 2015 that accelerates the inference phase of neural networks (NN). The heart of the TPU is a 65,536 8-bit MAC matrix multiply unit that offers a peak throughput of 92 TeraOps/second (TOPS) and a large (28 MiB) software-managed on-chip memory. The TPU's deterministic execution model is a better match to the 99th-percentile response-time requirement of our NN applications than are the time-varying optimizations of CPUs and GPUs that help average throughput more than guaranteed latency. The lack of such features helps explain why, despite having myriad MACs and a big memory, the TPU is relatively small and low power. We compare the TPU to a server-class Intel Haswell CPU and an Nvidia K80 GPU, which are contemporaries deployed in the same datacenters. Our workload, written in the high-level TensorFlow framework, uses production NN applications (MLPs, CNNs, and LSTMs) that represent 95\% of our datacenters' NN inference demand. Despite low utilization for some applications, the TPU is on average about 15X -- 30X faster than its contemporary GPU or CPU, with TOPS/Watt about 30X -- 80X higher. Moreover, using the CPU's GDDR5 memory in the TPU would triple achieved TOPS and raise TOPS/Watt to nearly 70X the GPU and 200X the CPU.},
+  booktitle = {Proceedings of the 44th Annual International Symposium on Computer Architecture},
+  pages = {1–12},
+  numpages = {12},
+  keywords = {CNN, DNN, GPU, LSTM, MLP, RNN, TPU, TensorFlow, accelerator, deep learning, domain-specific architecture, neural network},
+  location = {Toronto, ON, Canada},
+  series = {ISCA '17}
+}
+
+@ARTICLE{Eyeriss17,
+  author={Chen, Yu-Hsin and Krishna, Tushar and Emer, Joel S. and Sze, Vivienne},
+  journal={IEEE Journal of Solid-State Circuits}, 
+  title={Eyeriss: An Energy-Efficient Reconfigurable Accelerator for Deep Convolutional Neural Networks}, 
+  year={2017},
+  volume={52},
+  number={1},
+  pages={127-138},
+  keywords={Shape;Random access memory;Computer architecture;Throughput;Clocks;Neural networks;Hardware;Convolutional neural networks (CNNs);dataflow processing;deep learning;energy-efficient accelerators;spatial architecture},
+  doi={10.1109/JSSC.2016.2616357}
+}
+
+@misc{Eyerissv219,
+  title={Eyeriss v2: A Flexible Accelerator for Emerging Deep Neural Networks on Mobile Devices}, 
+  author={Yu-Hsin Chen and Tien-Ju Yang and Joel Emer and Vivienne Sze},
+  year={2019},
+  eprint={1807.07928},
+  archivePrefix={arXiv},
+  primaryClass={cs.DC},
+  url={https://arxiv.org/abs/1807.07928}, 
+}
+
+@ARTICLE{CGRA18,
+  author={Yin, Shouyi and Ouyang, Peng and Tang, Shibin and Tu, Fengbin and Li, Xiudong and Zheng, Shixuan and Lu, Tianyi and Gu, Jiangyuan and Liu, Leibo and Wei, Shaojun},
+  journal={IEEE Journal of Solid-State Circuits}, 
+  title={A High Energy Efficient Reconfigurable Hybrid Neural Network Processor for Deep Learning Applications}, 
+  year={2018},
+  volume={53},
+  number={4},
+  pages={968-982},
+  keywords={Artificial neural networks;Arrays;Acceleration;Throughput;Speech recognition;Energy efficiency;hybrid neural networks (hybrid-NNs);memory banking;reconfigurable computing;resource partitioning},
+  doi={10.1109/JSSC.2017.2778281}
+}
+
+@ARTICLE{RISC-V,
+  author={Cui, Enfang and Li, Tianzheng and Wei, Qian},
+  journal={IEEE Access}, 
+  title={RISC-V Instruction Set Architecture Extensions: A Survey}, 
+  year={2023},
+  volume={11},
+  number={},
+  pages={24696-24711},
+  keywords={Instruction sets;Microprocessors;Computer architecture;Task analysis;Graphics processing units;Cloud computing;Artificial intelligence;RISC-V;instruction set architecture;extensions;survey},
+  doi={10.1109/ACCESS.2023.3246491}
+}
+
+@inproceedings{LLVM04,
+  author = {Lattner, Chris and Adve, Vikram},
+  title = {LLVM: A Compilation Framework for Lifelong Program Analysis \& Transformation},
+  year = {2004},
+  isbn = {0769521029},
+  publisher = {IEEE Computer Society},
+  address = {USA},
+  abstract = {This paper describes LLVM (Low Level Virtual Machine),a compiler framework designed to support transparent, lifelongprogram analysis and transformation for arbitrary programs,by providing high-level information to compilertransformations at compile-time, link-time, run-time, and inidle time between runs.LLVM defines a common, low-levelcode representation in Static Single Assignment (SSA) form,with several novel features: a simple, language-independenttype-system that exposes the primitives commonly used toimplement high-level language features; an instruction fortyped address arithmetic; and a simple mechanism that canbe used to implement the exception handling features ofhigh-level languages (and setjmp/longjmp in C) uniformlyand efficiently.The LLVM compiler framework and coderepresentation together provide a combination of key capabilitiesthat are important for practical, lifelong analysis andtransformation of programs.To our knowledge, no existingcompilation approach provides all these capabilities.We describethe design of the LLVM representation and compilerframework, and evaluate the design in three ways: (a) thesize and effectiveness of the representation, including thetype information it provides; (b) compiler performance forseveral interprocedural problems; and (c) illustrative examplesof the benefits LLVM provides for several challengingcompiler problems.},
+  booktitle = {Proceedings of the International Symposium on Code Generation and Optimization: Feedback-Directed and Runtime Optimization},
+  pages = {75},
+  location = {Palo Alto, California},
+  series = {CGO '04}
 }
