@@ -206,7 +206,7 @@
   ]
   v(0pt)
   text(font: hei, size: 12pt)[关键词：]
-  text(font: song, size: 12pt)[深度神经网络；编译；调度器；存算一体]
+  text(font: song, size: 12pt)[深度学习编译器；LLVM 编译器；调度器；存算一体]
 
   pagebreak()
   set page(footer: context [
@@ -223,7 +223,7 @@
   text(font: song, size: 12pt)[Abstract.]
   v(0pt)
   text(font: hei, size: 12pt, weight: "bold")[KEY WORDS: ]
-  text(font: song, size: 12pt)[key word 1, key word 2, key word 3]
+  text(font: song, size: 12pt)[Deep Learning Compiler, LLVM Compiler, Scheduler, Computing in Memory]
   pagebreak()
 
   counter(page).update(1)
