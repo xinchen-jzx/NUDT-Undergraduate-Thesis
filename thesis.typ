@@ -237,13 +237,7 @@ LLVM 框架主要由前端、中端、后端三大部分组成：
 
 = 指令动态调度
 
-Let $a$, $b$, and $c$ be the side
-lengths of right-angled triangle.
-Then, we know that:
-$ a^2 + b^2 = c^2 $
-
-Prove by induction:
-$ sum_(k=1)^n k = (n(n+1)) / 2 $
+== 引言
 
 #pagebreak()
 
@@ -261,3 +255,14 @@ $ sum_(k=1)^n k = (n(n+1)) / 2 $
 
 
 == 未来的工作展望
+
+
+
+
+Let $a$, $b$, and $c$ be the side
+lengths of right-angled triangle.
+Then, we know that:
+$ a^2 + b^2 = c^2 $
+
+Prove by induction:
+$ sum_(k=1)^n k = (n(n+1)) / 2 $
