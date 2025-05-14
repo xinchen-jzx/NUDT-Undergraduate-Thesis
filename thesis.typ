@@ -1,5 +1,8 @@
 #import "thesis-template.typ": *
 #import "templates/i-figured.typ"
+
+#import "algo.typ": algo, i, d, comment, code
+
 #set heading(numbering: "1.")
 #show heading: i-figured.reset-counters.with(extra-kinds: ("atom",))
 #show figure: i-figured.show-figure.with(extra-prefixes: (atom: "atom:"))
@@ -172,13 +175,15 @@ IREE @IREE19：Google 于 2019 年发布的一个开源的通用编译和运行�
 
 第二章为主要技术基础。介绍了本文研究所涉及的相关基础概念，首先介绍了 RISC-V 基础指令集和扩展指令集，然后介绍了存算一体加速器的总体架构，最后还阐述了 LLVM 的结构和其后端的大致编译流程。
 
-第三章为指令动态调度。.........充分利用RISC-V已有指令集实现在执行AI任务运行时对各类计算资源的灵活调度，充分发挥SRAM存算一体阵列高能效、高算力密度的硬件优势。
+第三章为基于 RISC-V 存算一体加速器的编译器总体设计。.........充分利用RISC-V已有指令集实现在执行AI任务运行时对各类计算资源的灵活调度，充分发挥SRAM存算一体阵列高能效、高算力密度的硬件优势。
 
-第四章为基于 RISC-V 存算一体芯片的编译器后端设计。......
+第四章为智能识别 NPU 加速指令。......
 
-第五章为编译器测试与分析。实验对所实现编译器的各个模块进行了正确性验证，同时选取了神经网络中比较常见的 20 种算子在 RISC-V 存算一体模拟器中性能表现。
+第五章为指令调度。......
 
-第六章为工作总结与展望。总结了本文的研究工作，并指出了编译器的不足之处和今后需要改进完善的方向。
+第六章为编译器测试与分析。实验对所实现编译器的整体功能进行了测试，通过部署一个神经网络模型对编译器的总体功能以及编译器生成带的正确性进行了验证，同时选取了神经网络中比较常见的 20 种算子在 RISC-V 存算一体模拟器中性能表现。
+
+第七章为工作总结与展望。总结了本文的研究工作，并指出了本文设计的编译器的不足之处和今后需要改进完善的方向。
 
 #pagebreak()
 
@@ -464,19 +469,29 @@ ONNX 结构如@onnx-ir 所示，当我们将 ONNX 模型加载进来之后，得
 
 = 智能识别 NPU 指令
 
-上一章主要对本文编译器的整体架构进行了系统的阐述，本章着重介绍编译器如何在 LLVM IR 中间表示上进行应用特征分析，识别出可加速的 LLVM IR 范式，以自动将它们卸载到 CIM 加速器的 NPU 核心进行加速计算，转为特定的 RISC-V 加速指令，充分利用 RISC-V 通用核心、NPU 加速核心的高效能特征。
+上一章主要对本文编译器的整体架构，从编译器前端、中端到后端进行了系统的阐述，本章着重介绍编译器如何在 LLVM IR 中间表示上进行应用特征分析，识别出可加速的 LLVM IR 范式，以自动将它们卸载到 CIM 加速器的 NPU 核心进行加速计算，转为特定的 RISC-V 加速指令，充分利用 RISC-V 通用核心、NPU 加速核心的高效能特征。
 
-== LLVM IR
+== LLVM IR 与可加速范式
+
+当前基于 RISC-V 存算一体模拟器仅通过支持 RISC-V 向量、矩阵扩展指令集来进行加速计算，为了利用 RISC-V 存算一体加速器中的 NPU 核心来加速计算，编译器应该识别出 LLVM IR 中可以通过 NPU 核心加速的典型计算模式。尽管 CIM 加速器的应用场景越来越多，但 CIM 加速器可以加速的基本操作却非常有限。根据其底层硬件设计，我们识别出四种典型的可加速计算范式，即标量 - 向量操作（Scalar-Vector Multiplications，SVM）、向量 - 向量操作（Vector-Vector Multiplications，VVM）、矩阵 - 向量操作（Matrix-Vector Multiplications，MVM）、矩阵 - 矩阵操作（Matrix-Matrix Multiplications，MMM），这几种计算范式都是通过比较复杂的循环策略来实现的。因此，为了实现这些可加速范式，本文对 LLVM IR 的循环结构进行深入分析，旨在剖析不同的加速范式所对应的循环结构的特征，从而为编译器智能识别出 NPU 加速指令提供关键依据，进而充分发挥 RISC-V 存算一体加速器中 NPU 核心的加速效能。
 
 LLVM IR 是 LLVM 编译器框架中的一种中间语言，它提供了一个抽象层次，使得编译器能够在多个阶段进行优化和代码生成。LLVM IR 具有类精简指令集、使用三地址指令格式的特征，使其在编译器设计中非常强大和灵活。LLVM IR 的设计理念类似于精简指令集（RISC），这意味着它倾向于使用简单且数量有限的指令来完成各种操作。其指令集支持简单指令的线性序列，比如加法、减法、比较和条件分支等。这使得编译器可以很容易地对代码进行线性扫描和优化。
 
-== 可加速范式
+== 标量 - 向量操作（Scalar-Vector Multiplications，SVM）
 
+== 向量 - 向量操作（Vector-Vector Multiplications，VVM）
 
+== 矩阵 - 向量操作（Matrix-Vector Multiplications，MVM）
+
+对于大多数神经网络应用和图像处理应用，其中包含大量的 MVM 操作，并且它们往往会对性能和能耗产生很大的影响。一个典型的 MVM 操作通常表示为两阶段循环，在由源码编译得到的 IR 代码中，“loop.condA”和“loop.condC”分别是外层循环和内层循环的循环条件块，而“loop.bodyB”和“loop.bodyD”分别是外层和内层循环的循环体块，其中字母A-D表示各模块的标识。总之，为了识别MVM模式，必须首先识别两级嵌套循环结构，然后识别内循环中的乘法和加法指令以及对应的MAC操作，同时需要保证乘法和加法相关的数据来自向量和矩阵。
+
+== 矩阵 - 矩阵操作（Matrix-Matrix Multiplications，MMM）
+
+矩阵 - 矩阵操作（Matrix-Matrix Multiplications，MMM）是一个在时间和能耗方面花费都很昂贵的计算任务，但它是神经网络等应用中的一个常见操作。其识别过程与MVM类似，只需要识别IR中的三层嵌套循环结构和最内层的循环中有关两个矩阵间的MAC操作。
 
 == 本章小结
 
-本章主要实现了以 RISC-V 存算一体模拟器为目标设备的编译器后端。
+本章主要描述了如何在 LLVM IR 中间表示上智能识别出可加速范式，并对四种典型的可加速计算范式分析了其所对应的循环结构的特征，进而编译器可以依据此来智能识别出 NPU 加速指令，充分利用 RISC-V 通用核心、NPU 加速核心的高效能特征。
 
 #pagebreak()
 
@@ -529,7 +544,7 @@ LLVM IR 是 LLVM 编译器框架中的一种中间语言，它提供了一个抽
   [
     #t5-1
   ],
-)    
+)
 
 #h(2em)（2）读后写（WAR）：一条指令写入数据到前一条指令的操作数。这种依赖被称为反依赖或反相关（anti dependence）。
 
@@ -573,6 +588,8 @@ LLVM IR 是 LLVM 编译器框架中的一种中间语言，它提供了一个抽
 
 静态指令调度是编译器后端优化的一个非常重要的阶段。现代的处理器当中绝大部分都使用流水线结构，即指令是流水执行的，我们知道理想的流水线可能使得作业效率有成倍的提高，但是对应到计算机处理器当中的流水线，要想达到效率最优是非常困难的，这就是因为指令之间的数据依赖和结构相关所造成的，静态指令调度就是在还不知道程序某些动态信息和行为的情况下，根据所分析的指令之间依赖关系以及目标硬件架构的资源状况，对指令序列进行重排，从而减少流水线停顿，以期缩短程序的执行时间。
 
+=== 表调度算法（List Scheduling）
+
 本文编译器中采用表调度（List Scheduling）算法，表调度是一种贪心 + 启发式方法，用以调度基本块中的各个指令操作，是基本块中指令调度的最常见方法。基于基本块的指令调度不需要考虑程序的控制流，主要考虑数据依赖、目标体系结构指令延迟、硬件资源、流水线情况等信息。
 
 表调度的基本思想：维护一个用来存储已经准备执行的指令的 `ready` 列表和一个正在执行指令的 `active` 列表，`ready` 列表的构建主要基于数据依赖约束和硬件资源信息；根据调度算法以周期为单位来执行具体的指令调度，包括从列表中选择及调度指令，更新列表信息。
@@ -585,6 +602,53 @@ LLVM IR 是 LLVM 编译器框架中的一种中间语言，它提供了一个抽
     
 （3）不断选择一个指令，并调度它。使用两个队列维护 `ready` 的指令和正在执行的 `active` 的指令；在每个周期，选择一个满足条件的 `ready` 的指令并调度它，更新 `ready` 队列；检查 `active` 的指令是否执行完毕，更新 `active` 列表。
 
+=== 举个例子
+
+假设当前 CPU 有两个计算单元，即每个周期可以执行两条指令。加法指令的 latency 为 2 cycles，其他指令为 1 cycle。以下面代码为例。
+
+#let t5-4 = table(
+  columns: 1,
+  [
+    ```c
+    r0: a = 1;
+    r1: f = a + x;
+    r2: b = 7;
+    r3: c = 9;
+    r4: g = f + d;
+    r5: d = 13;
+    r6: e = 19;
+    r7: h = f + c;
+    r8: j = d + y;
+    r9: z = -1;
+    r10: JMP L1;
+    ```
+  ],
+)
+
+#align(
+  center,
+  [
+    #t5-4
+  ],
+)
+
+#h(2em)（1）根据数据依赖关系构建出依赖关系图。如@Example-Schedule 所示。
+
+#figure(
+  image("./images/Example-Schedule.png", width: 50%),
+  caption: [
+    依赖关系图
+  ],
+) <Example-Schedule>
+
+（2）计算指令节点的优先级。优先级计算公式为：$$
+
+#figure(
+  image("./images/Example-Schedule-2.png", width: 50%),
+  caption: [
+    计算指令节点的优先级
+  ],
+) <Example-Schedule-2>
 
 == 动态指令调度
 
@@ -595,6 +659,175 @@ LLVM IR 是 LLVM 编译器框架中的一种中间语言，它提供了一个抽
 #pagebreak()
 
 = 编译器测试与分析
+
+本文在第 3 章从编译器前端、中端以及后端介绍了基于 RISC-V 存算一体加速器设计的编译器的总体架构，分别在第 4 章和第 5 章着重介绍了如何智能识别 NPU 加速指令以及指令调度，来充分发挥存算一体的优势。本章主要在 RISC-V 存算一体模拟器上对深度学习网络中常见的算子开展功能性验证和性能测试，并选取自定义的 FASHION MNIST 网络模型作为实例，同时呈现最终的测试结果。
+
+== 编译器功能测试
+
+FASHION-MNIST 是一个替代 MNIST 手写数字集的图像数据集。它是由 Zalando 旗下的研究部门提供的，其涵盖了来自 10 种类别的共 70000 个不同商品的正面图片。FASHION-MNIST 的大小、格式和训练集/测试集划分与原始的 MNIST 完全一致。60000/10000 的训练测试数据划分，$28 * 28$ 的灰度图片。
+
+本次实验使用的网络模型为我们自定义的 FASHION MNIST 网络模型，该网络模型使用 FASHION MNIST 数据集进行训练。实验使用的自定义的 FASHION MNIST 网络模型结构如@FASHION-MNIST 所示，ONNX 可视化部分结果如@ONNX-Model 所示。该网络模型由 3 个卷积层和 2 个全连接层构成，除最后一个全连接层外每个层的输出都使用 ReLU 函数进行激活。
+
+#figure(
+  image("./images/onnx-model.png", width: 100%),
+  caption: [
+    网络架构图
+  ],
+) <ONNX-Model>
+
+#let t6-3 = table(
+  columns: 1,
+  [
+    ```py
+    x1 = conv2d(input_image, weight_1, bias_1)
+    x2 = x1 * scale_1
+    x2 = clip(x2)
+
+    x3 = conv2d(x2, weight_2, bias_2)
+    x3 = x3 * scale_2
+    x4 = clip(x3)
+
+    x5 = maxpool2d(x4, stride_1)
+
+    x6 = conv2d(x5, weight_3, bias_3)
+    x6 = x6 * scale_3
+    x7 = clip(x6)
+
+    x8 = maxpool2d(x7, stride_2)
+
+    x9 = flatten(x8)
+
+    xa = linear(x9)
+    xa = xa * scale_4
+    xb = clip(xa)
+
+    xc = linear(xb)
+    xc = xc * scale_5
+
+    xd = log_softmax(xc)
+    ```
+  ],
+)
+
+#align(
+  center,
+  [
+    #t6-3
+  ],
+)
+
+#figure(
+  table(
+  columns: 2,
+  stroke: (x: none),
+  align: horizon,
+
+  [*层类型*], [*核尺寸/步长*],
+
+  [*Conv*],
+  [$3 * 3$/$1, 1$],
+
+  [*Conv*],
+  [$3 * 3$/$1, 1$],
+
+  [*MaxPool*],
+  [$2 * 2$/$2, 2$],
+
+  [*Conv*],
+  [$3 * 3$/$1, 1$],
+
+  [*MaxPool*],
+  [$2 * 2$/$2, 2$],
+
+  [*Flatten*],
+  [-],
+
+  [*Full_Connect*],
+  [-],
+
+  [*Full_Connect*],
+  [-],
+
+  [*LogSoftmax*],
+  [-],
+), caption: [自定义 FASHION MNIST 网络模型结构]
+) <FASHION-MNIST>
+
+本次实验基于 FASHION MNIST 数据集，采用自定义的 FASHION MNIST 网络模型，通过所设计的针对 RISC-V  存算一体加速器的编译器进行编译并执行推理任务，来评估编译器在该特定场景下的性能表现以及能效情况。同时，使用 Python 来模拟该网络模型，记录模型的每一层的输出以及最终输出的计算结果，对编译器的功能性进行对比验证。
+
+经过验证对比，我们发现通过本文编译器编译 ONNX 模型和使用 Python 模拟该网络模型，其每一层的输出以及最终输出的计算结果一致，故，本文编译器的功能性得到了验证。
+
+#let t6-1 = table(
+  columns: 1,
+  [
+    ```txt
+    * * * * Performance Analysis * * * * 
+    NPU work ratio: 95%
+      Off-chip Transfer ratio: 65%
+      Tensor Manipulate ratio: 3%
+      Matrix Processing ratio: 15%
+      Vector Processing ratio: 16%
+    CIM Analysis:
+      CIM Compute ratio: 6.0%
+      CIM Space Utilization: 69.9%
+      CIM Utilization: 4.2%
+      Effective Performance: 42.804GOPS @INint8-Wint8
+    ```
+  ],
+)
+
+#align(
+  center,
+  [
+    #t6-1
+  ],
+)
+
+#h(2em) 从性能分析结果来看，我们发现在此次推理过程中 NPU 的工作比例达到了 $95%$，矩阵处理占比 $15%$，向量处理占比 $16%$，二者合计占比 $31%$，Tensor Manipulate 占比 $3%$，这表明编译器能够有效地识别、映射中间表示到指定的张量、向量等 RISC-V 扩展指令，以通过 NPU 核心加速，并根据程序依赖生成必要的同步指令在保证 CPU 和 NPU 协同计算的正确性的同时挖掘计算的并发性，体现了编译器在指令调度和资源分配方面的良好性能。关于 Tensor Manipulate 占比之所以这么低，是因为在底层硬件设计中 Tensor Manipulate 表示的操作是片上内存之间的数据搬运，而在推理过程中片上存储之间的数据搬运很少，所以 Tensor Manipulate 的占比很低。然而，片上片外数据传输（Off-Chip Transfer）比例却占据了 $65%$，成为 NPU 内部最大耗时环节，凸显“内存墙”问题。此现象与 RISC-V 存算一体芯片的层次化存储架构相关。当我们将某些计算卸载到 CIM 加速器的 NPU 核心进行加速计算时，我们需要把对应的参数的权重、偏置等等从片外内存传输到片上内存，成为影响系统整体性能的关键瓶颈。特别是该 FASHION MNIST 网络模型最后两层都是全连接层，性能受限于该全连接层的权重搬运。
+
+在存算一体（CIM）相关分析中，CIM 计算比例仅为 $6.0%$，利用率仅为 $4.2%$，这主要是因为片上片外数据传输（Off-Chip Transfer）比例占据了 $65%$，特别是该 FASHION MNIST 网络模型最后两层都是全连接层，性能受限于该全连接层的权重搬运，所以 CIM 的计算比例和利用率很低。CIM 空间利用率达到了 69.9%，这一数值表明 CIM 内部存储空间的利用率处于一个相对合理的水平，编译器后端内存分配管理充分利用了 CIM 的存储资源，减少了不必要的存储冗余。CIM 有效性能为 $42.804$ GOPS \@INint8 - Wint8，在 INT8 量化下，NPU 实现了 $42.8$ GOPS 有效算力。
+
+#let t6-2 = table(
+  columns: 1,
+  [
+    ```txt
+    * * * * Power Analysis * * * *
+    - - - - NPU Level - - - - 
+      Spad R/W energy cost: 3491064.32pJ, ratio:44%
+      PE vector energy cost: 0.0pJ, ratio:0%
+      CIM R/W energy cost: 1295134.72pJ, ratio:16%
+      CIM compute energy cost: 3120578.56pJ, ratio:39%
+      NPU energy cost: 7906777.6pJ
+      CIM Compute Energy Efficiency: 12.5TOPS/W
+      NPU Energy Efficiency: 4.93TOPS/W @INint8-Wint8
+    - - - - System Level - - - - 
+      NPU ENERGY
+        NPU energy cost: 7906777.6pJ, ratio:9%
+      CPU ENERGY
+        CPU energy cost: 0pJ, ratio:0%
+      Off-chip ENERGY
+        pSRAM energy cost: 75476480pJ, ratio:91%
+      Energy Efficiency
+        Total energy cost: 83383257.6pJ
+        Total Energy Efficiency: 0.47TOPS/W @INint8-Wint8
+    ```
+  ],
+)
+
+#align(
+  center,
+  [
+    #t6-2
+  ],
+)
+
+#h(2em) 在能效分析方面，于 NPU 级别，Spad R/W 能量成本占比最高，达到了 $44%$，Scratchpad 频繁读写与高片上片外数据传输占比（Off-Chip Transfer）形成了因果关系，这凸显了芯片内部存储单元的读写操作对能量消耗的显著影响，这提示我们在未来的编译器优化过程中，需要重点关注如何降低 Spad 的读写频率或优化其读写策略，以减少这部分的能量开销。CIM R/W 能量成本占比为 $16%$，CIM 计算能量成本占比为 $39%$，这表明 CIM 的能量消耗主要集中在计算过程以及数据的读写操作上，这也与 CIM 的工作原理和特点相符合。CIM 计算能效为 $12.5$ TOPS/W，而 NPU 能效为 $4.93$ TOPS/W \@INint8 - Wint8，相比之下，CIM 在能效方面表现出了一定的优势，这也进一步证明了存算一体架构在能效提升方面的潜力，但同时也需要注意到整个 NPU 的能效还有较大的提升空间，需要综合考虑编译器的优化策略以及硬件架构的改进来进一步提高能效。
+
+在系统级别，NPU 的能量成本占比为 $9%$，而片上片外内存传输（Off-Chip）的能量成本占比高达 $91%$，这再次凸显了片上片外数据传输对系统整体能量消耗的主导地位，这一结果与性能分析中的片上片外数据传输占比（Off-Chip Transfer）比例较高的现象相呼应，进一步强调了减少片上片外数据传输对于提升系统能效的重要性。整个系统的总能量成本为 $83383257.6$ pJ，总能效仅为 $0.47$ TOPS/W \@INint8 - Wint8，这一较低的系统能效值凸显片上片外数据传输对能效的毁灭性影响，需硬件-编译器协同设计：如采用3D堆叠内存等等。
+
+== 编译器性能测试
+
+本次实验不仅基于 FASHION MNIST 数据集完成了自定义网络模型的推理任务，还对一些常见的算子在利用 NPU 和不利用 NPU 两种情况下进行了详细测试与对比，性能测试结果如@result 所示，深度学习常见的算子的分类如@operator 所示。
 
 #figure(
   table(
@@ -619,7 +852,7 @@ LLVM IR 是 LLVM 编译器框架中的一种中间语言，它提供了一个抽
   [*数据排布算子*],
   [ReduceMax, ArgueMax, Transpose, Clip, Max_Pooling],
 ), caption: [测试算子类别表]
-)
+) <operator>
 
 #figure(
   table(
@@ -729,9 +962,24 @@ LLVM IR 是 LLVM 编译器框架中的一种中间语言，它提供了一个抽
   [20145],
   [41.01],
 ), caption: [算子测试结果对比（单位：Cycle）]
-)
+) <result>
+
+#figure(
+  image("./images/result.png", width: 100%),
+  caption: [
+    算子测试结果
+  ],
+) <Operator-Result>
+
+从测试结果可以看出，NPU 的引入为大多数算子带来了显著的加速效果。其中，Conv 算子的加速比高达 753.34，GEMM 算子的加速比也达到了 $230.02$，这表明编译器能够有效利用 NPU 的加速计算的能力，优化卷积和矩阵运算等计算密集型操作的执行效率。此外，像 Add、Multiply、Equal 等基础算术和逻辑运算算子，以及 Leaky_ReLu、Clip 等激活函数相关的算子，其加速比也都在 $20$ 以上，充分体现了 NPU 在处理这些常见算子时的优势。
+
+然而，对于某些特定算子，如 ArgueMax，其加速比仅为 2.42，相对较低。这是因为该算子本身的计算特性与 NPU 的架构优势不完全匹配。此外，像 Exp、Sigmoid、Tanh 等算子，虽然也取得了一定的加速效果，但加速比相较于其他算子并不算突出，这提示我们在后续的编译器优化工作中，可以重点关注这类算子，深入分析其计算模式和数据访问特点，进一步挖掘 NPU 的潜在性能。
+
+综合来看，本次实验结果表明，本文所设计的编译器能够有效利用 NPU 的硬件资源，为大多数算子带来显著的性能提升，但针对个别特殊算子的优化仍有改进空间，以实现更广泛的算子加速效果，进而提升整个神经网络模型在 RISC-V 存算一体加速器上的执行效率。
 
 == 本章小结
+
+本章对编译器的整体功能进行了功能性测试和性能测试，并进行了结果分析，验证了其基本功能的完整性。实验表明本文的编译器可以成功的将深度学习模型编译为等价的 RISC-V 通用指令和 RISC-V 加速指令，充分利用 RISC-V 通用核心、NPU 加速核心的高效能特征。
 
 #pagebreak()
 
