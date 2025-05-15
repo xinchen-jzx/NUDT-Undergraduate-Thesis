@@ -473,25 +473,231 @@ ONNX 结构如@onnx-ir 所示，当我们将 ONNX 模型加载进来之后，得
 
 == LLVM IR 与可加速范式
 
-当前基于 RISC-V 存算一体模拟器仅通过支持 RISC-V 向量、矩阵扩展指令集来进行加速计算，为了利用 RISC-V 存算一体加速器中的 NPU 核心来加速计算，编译器应该识别出 LLVM IR 中可以通过 NPU 核心加速的典型计算模式。尽管 CIM 加速器的应用场景越来越多，但 CIM 加速器可以加速的基本操作却非常有限。根据其底层硬件设计，我们识别出四种典型的可加速计算范式，即标量 - 向量操作（Scalar-Vector Multiplications，SVM）、向量 - 向量操作（Vector-Vector Multiplications，VVM）、矩阵 - 向量操作（Matrix-Vector Multiplications，MVM）、矩阵 - 矩阵操作（Matrix-Matrix Multiplications，MMM），这几种计算范式都是通过比较复杂的循环策略来实现的。因此，为了实现这些可加速范式，本文对 LLVM IR 的循环结构进行深入分析，旨在剖析不同的加速范式所对应的循环结构的特征，从而为编译器智能识别出 NPU 加速指令提供关键依据，进而充分发挥 RISC-V 存算一体加速器中 NPU 核心的加速效能。
+当前基于 RISC-V 存算一体模拟器仅通过支持 RISC-V 向量、矩阵扩展指令集来进行加速计算，为了利用 RISC-V 存算一体加速器中的 NPU 核心来加速计算，编译器应该识别出 LLVM IR 中可以通过 NPU 核心加速的典型计算模式。尽管 CIM 加速器的应用场景越来越多，但 CIM 加速器可以加速的基本操作却非常有限。根据其底层硬件设计，我们识别出三种典型的可加速计算范式，即向量 - 向量操作（Vector-Vector Multiplications，VVM）、矩阵 - 向量操作（Matrix-Vector Multiplications，MVM）、矩阵 - 矩阵操作（Matrix-Matrix Multiplications，MMM），这几种计算范式都是通过比较复杂的循环策略来实现的。因此，为了实现这些可加速范式，本章对 LLVM IR 的循环结构进行深入分析，旨在剖析不同的加速范式所对应的循环结构的特征，从而为编译器智能识别出 NPU 加速指令提供关键依据，进而充分发挥 RISC-V 存算一体加速器中 NPU 核心的加速效能。
 
-LLVM IR 是 LLVM 编译器框架中的一种中间语言，它提供了一个抽象层次，使得编译器能够在多个阶段进行优化和代码生成。LLVM IR 具有类精简指令集、使用三地址指令格式的特征，使其在编译器设计中非常强大和灵活。LLVM IR 的设计理念类似于精简指令集（RISC），这意味着它倾向于使用简单且数量有限的指令来完成各种操作。其指令集支持简单指令的线性序列，比如加法、减法、比较和条件分支等。这使得编译器可以很容易地对代码进行线性扫描和优化。
+以矩阵 - 向量操作（MVM）为例，MVM 通常是由两层嵌套的循环来实现的，并且内循环体中的迭代语句与向量和矩阵相关。因此，为了识别出 MVM 计算范式，我们必须首先识别出两层嵌套循环的循环结构，然后识别出内层循环中两个向量之间的操作。
 
-== 标量 - 向量操作（Scalar-Vector Multiplications，SVM）
+#figure(
+  image("./images/MVM.png", width: 100%),
+  caption: [
+    MVM 循环结构分析
+  ],
+) <MVM>
+
+而 LLVM IR 是 LLVM 编译器框架中的一种中间语言，它提供了一个抽象层次。LLVM IR 具有类精简指令集、使用三地址指令格式的特征，使其在编译器设计中非常强大和灵活，因此，可以利用它来识别可以通过 CIM 加速器进行加速的计算模式。它们的结构和关键信息都可以在 LLVM IR 的不同块中来找到。一个 IR 文件通常包含许多块，每个块由多条语句组成。@MVM 展示了 LLVM IR 中两层嵌套循环的逻辑块，不同颜色的圆圈代表不同类型的块，其中绿色、橙色和蓝色的圆圈分别代表了循环条件、循环体以及循环结束的逻辑块，这些块通过跳转语句连接起来，跳转语句包括无条件跳转和条件跳转。因此，我们在 LLVM IR 中分析这些块，以识别出可加速的计算范式，并将其转为特定的 RISC-V 加速指令，充分利用 RISC-V 通用核心、NPU 加速核心的高效能特征。
+
+通常，表示循环条件、循环体以及循环结束的逻辑块很容易在 LLVM IR 中识别，因为它在编译器中维护了一些有用的信息。例如，我们可以直接从名称推断出块的类型（`for.cond, for.boby, for.end`）。
 
 == 向量 - 向量操作（Vector-Vector Multiplications，VVM）
 
+在深度学习算法中，向量 - 向量操作（Vector-Vector Multiplication，VVM）虽不如矩阵 - 矩阵操作、矩阵 - 向量操作那般频繁出现，但也颇具常见性。例如点积（内积），它将两个向量映射为一个标量，常用于计算向量之间的相似度，如在注意力机制（Attention Mechanism）里，通过查询向量（Query）和键向量（Key）的点积来衡量它们的相关性，进而确定值向量（Value）的权重，对信息进行筛选整合，这对像机器翻译、文本生成这类序列建模任务的性能发挥着关键作用，影响着结果的准确度和合理性。
+
+对于一个大小为 $1 times m$ 的向量 $Q$ 和一个大小为 $m times 1$ 的向量 $K$, 它们的乘积是一个大小为标量 $\v\a\l\u\e$。数学表达式为 $\v\a\l\u\e=Q dot K$，具体计算逻辑代码如下所示。
+
+#let t4-3 = table(
+  columns: 1,
+  [
+    ```c
+    void vec_vec_processing(int *Q, int *K, int c, int m){
+      for (int i = 1; i <= m; i++) {
+        c += (a[i] * b[i]);
+      }
+    }
+    ```
+  ],
+)
+
+#align(
+  center,
+  [
+    #t4-3
+  ],
+)
+
+#h(2em) 接下来，我们分析由上述代码生成的 LLVM IR，Pattern 1 显示了 LLVM IR 中的 VVM 可加速范式。其中，`loop.condA` 是循环的循环条件块，`loop.bodyB` 是循环的循环体，字母 `A - B` 表示各模块的标识，`loop` 可以表示由 `for` 或 `while` 语句产生的循环结构。`loop.bodyB` 主要用于实现应用程序的计算逻辑。此外，一些关键指令和指令之间的依赖关系在 `loop.bodyB` 中受到约束。
+
+#algo(
+  header: "Pattern 1: A typical VVM pattern in LLVM IR",
+)[
+  loop.condA:                                               ; preds = %28, %4#i\
+    %11 = load i32, ptr %9, align 4\
+    %12 = load i32, ptr %8, align 4\
+    %13 = icmp sle i32 %11, %12\
+    br i1 %13, label %loop.bodyB, label %loop.endX#d\
+  loop.bodyB:                                               ; preds = %loop.condA#i\
+    %15 = load ptr, ptr %5, align 8\
+    %16 = load i32, ptr %9, align 4\
+    %17 = sext i32 %16 to i64\
+    %arrayidx1 = getelementptr inbounds i32, ptr %15, i64 %17\
+    %arrayvalue1 = load i32, ptr %arrayidx1, align 4\
+    %20 = load ptr, ptr %6, align 8\
+    %21 = load i32, ptr %9, align 4\
+    %22 = sext i32 %21 to i64\
+    %arrayidx2 = getelementptr inbounds i32, ptr %20, i64 %22\
+    %arrayvalue2 = load i32, ptr %arrayidx2, align 4\
+    %value = mul nsw i32 %arrayvalue1, %arrayvalue2\
+    %26 = load i32, ptr %7, align 4\
+    %ans = add nsw i32 %26, %value\
+    store i32 %ans, ptr %7, align 4\
+    br label %28#d\
+  28:#i\
+    %29 = load i32, ptr %9, align 4\
+    %30 = add nsw i32 %29, 1\
+    store i32 %30, ptr %9, align 4\
+    br label %loop.condA, !llvm.loop !6\
+]
+
 == 矩阵 - 向量操作（Matrix-Vector Multiplications，MVM）
 
-对于大多数神经网络应用和图像处理应用，其中包含大量的 MVM 操作，并且它们往往会对性能和能耗产生很大的影响。一个典型的 MVM 操作通常表示为两阶段循环，在由源码编译得到的 IR 代码中，“loop.condA”和“loop.condC”分别是外层循环和内层循环的循环条件块，而“loop.bodyB”和“loop.bodyD”分别是外层和内层循环的循环体块，其中字母A-D表示各模块的标识。总之，为了识别MVM模式，必须首先识别两级嵌套循环结构，然后识别内循环中的乘法和加法指令以及对应的MAC操作，同时需要保证乘法和加法相关的数据来自向量和矩阵。
+矩阵 - 向量操作（Matrix-Vector Multiplications，MVM）是一种典型的计算模式，可以通过 CIM 加速器进行加速。对于大多数神经网络应用和图像处理应用，其中包含大量的 MVM 操作，并且它们往往会对性能和能耗产生很大的影响。
+
+对于一个大小为 $m times n$ 的矩阵 $A$ 和一个大小为 $n times 1$ 的向量 $x$, 它们的乘积是一个大小为 $m times 1$ 的向量 $y$。数学表达式为 $y=\Ax$，具体计算逻辑代码如下所示。
+
+#let t4-1 = table(
+  columns: 1,
+  [
+    ```c
+    void mat_vec_processing(int **a, int *b, int *c, int m, int n){
+      for (int i = 1; i <= m; i++) {
+        for (int j = 1; j <= n; j++) {
+          c[j] += (a[i][j] * b[j]);
+        }
+      }
+    }
+    ```
+  ],
+)
+
+#align(
+  center,
+  [
+    #t4-1
+  ],
+)
+
+#h(2em) 接下来，我们分析由上述代码生成的 LLVM IR，Pattern 2 显示了 LLVM IR 中的 MVM 可加速范式，我们可以在@MVM 中相对应的循环逻辑结构。其中，`loop.condA` 和 `loop.condC` 分别是外层循环和内层循环的循环条件块，`loop.bodyB` 和 `loop.bodyD` 分别是外层循环和内层循环的循环体，字母 `A - D` 表示各模块的标识，`loop` 可以表示由 `for` 或 `while` 语句产生的循环结构。`loop.bodyB` 主要用于初始化内层循环的相关循环变量，`loop.bodyD` 主要用于实现应用程序的计算逻辑。此外，一些关键指令和指令之间的依赖关系在 `loop.bodyD` 中受到约束。
+
+#algo(
+  header: "Pattern 2: A typical MVM pattern in LLVM IR",
+)[
+  loop.condA:#i\
+    %\<rang_i\> = load i32, ptr %\<i\>, align 4\
+    %cmp1 = icmp sle i32 %\<rang_i\>, \<m\>\
+    br i1 %cmp1, label %loop.bodyB, label %loop.endX#d\
+  loop.bodyB:#i\
+    br label %loop.condC#d\
+  loop.condC:#i\
+    %\<range_j\> = load i32, ptr %\<j\>, align 4\
+    %cmp2 = icmp sle i32 %\<range_j\>, \<n\>\
+    br i1 %cmp2, label %loop.bodyD, label %loop.endY#d\
+  loop.bodyD:#i\
+    %27 = load ptr, ptr %26, align 8\
+    %28 = load i32, ptr %12, align 4\
+    %29 = sext i32 %28 to i64\
+    %arrayidx1 = getelementptr inbounds i32, ptr %27, i64 %29\
+    %arrayvalue1 = load i32, ptr %arrayidx1, align 4\
+    %32 = load ptr, ptr %7, align 8\
+    %33 = load i32, ptr %12, align 4\
+    %34 = sext i32 %33 to i64\
+    %arrayidx2 = getelementptr inbounds i32, ptr %32, i64 %34\
+    %arrayvalue2 = load i32, ptr %arrayidx2, align 4\
+    %value = mul nsw i32 %arrayvalue1, %arrayvalue2\
+    %38 = load ptr, ptr %8, align 8\
+    %39 = load i32, ptr %11, align 4\
+    %40 = sext i32 %39 to i64\
+    %arrayidx3 = getelementptr inbounds i32, ptr %38, i64 %40\
+    %arrayvalue3 = load i32, ptr %arrayidx3, align 4\
+    %ans = add nsw i32 %arrayvalue3, %value\
+    store i32 %ans, ptr %arrayidx3, align 4\
+    br label %block#d\
+  block:#i\
+    %45 = load i32, ptr %12, align 4\
+    %46 = add nsw i32 %45, 1\
+    store i32 %46, ptr %12, align 4\
+    br label %loop.condC, !llvm.loop !6\
+]
+
+#h(2em) 接下来分析上述 Pattern 1 中的 LLVM IR，`arrayidx#`表示 MVM 操作中矩阵或向量对应位置的数据的地址，`<i>, <j>` 表示循环条件变量，`%range_#` 表示对应的值。`icmp` 指令用来比较两个变量，并将比较后的结果存储在布尔变量 `%cmp#` 中，这条关键指令用于判断循环终止的条件。其中 `i32` 表示整数类型。上述 Pattern 中首先将向量乘法的结果赋值给输出变量 `%value`，然后进行累加将结果赋值给 `%ans`。因此，应该循环内部约束 `mul` 和 `add` 之间的依赖关系。总的来说，为了识别 MVM 加速模式，我们必须首先识别两层的嵌套循环结构，然后识别内部循环中的乘法和加法指令。
 
 == 矩阵 - 矩阵操作（Matrix-Matrix Multiplications，MMM）
 
-矩阵 - 矩阵操作（Matrix-Matrix Multiplications，MMM）是一个在时间和能耗方面花费都很昂贵的计算任务，但它是神经网络等应用中的一个常见操作。其识别过程与MVM类似，只需要识别IR中的三层嵌套循环结构和最内层的循环中有关两个矩阵间的MAC操作。
+在传统得到计算机体系结构中，矩阵 - 矩阵操作（Matrix-Matrix Multiplications，MMM）是一个在时间和能耗方面花费都很昂贵的计算任务，但它是神经网络等应用中的一个常见操作。其识别过程与 MVM 类似，只需要识别IR中的三层嵌套循环结构和最内层的循环中有关两个矩阵间的相关操作。
+
+对于一个大小为 $m times n$ 的矩阵 $A$ 和一个大小为 $n times p$ 的矩阵 $B$, 它们的乘积是一个大小为 $m times p$ 的矩阵 $C$。数学表达式为 $C=\AB$，具体计算逻辑代码如下所示。
+
+#let t4-2 = table(
+  columns: 1,
+  [
+    ```c
+    void mat_mat_processing(int **a, int **b, int **c, int m, int n, int p){
+      for (int i = 1; i <= m; i++) {
+        for (int j = 1; j <= p; j++) {
+          for (int k = 1; k <= n; k++) {
+            c[i][j] += (a[i][k] * b[k][j]);
+          }
+        }
+      }
+    }
+    ```
+  ],
+)
+
+#align(
+  center,
+  [
+    #t4-2
+  ],
+)
+
+#algo(
+  header: "Pattern 3: A typical MMM pattern in LLVM IR",
+)[
+  loop.condA:......\
+  loop.bodyB:......\
+  loop.condC:......\
+  loop.bodyD:......\
+  loop.condE:......\
+  loop.bodyF:#i\
+    %35 = load ptr, ptr %34, align 8\
+    %36 = load i32, ptr %15, align 4\
+    %37 = sext i32 %36 to i64\
+    %arrayidx1 = getelementptr inbounds i32, ptr %35, i64 %37\
+    %arrayvalue1 = load i32, ptr %arrayidx1, align 4\
+    %44 = load ptr, ptr %43, align 8\
+    %45 = load i32, ptr %14, align 4\
+    %46 = sext i32 %45 to i64\
+    %arrayidx2 = getelementptr inbounds i32, ptr %44, i64 %46\
+    %arrayvalue2 = load i32, ptr %arrayidx2, align 4\
+    %value = mul nsw i32 %arrayvalue1, %arrayvalue2\
+    %54 = load ptr, ptr %53, align 8\
+    %55 = load i32, ptr %14, align 4\
+    %56 = sext i32 %55 to i64\
+    %arrayidx3 = getelementptr inbounds i32, ptr %54, i64 %56\
+    %arrayvalue3 = load i32, ptr %arrayidx3, align 4\
+    %ans = add nsw i32 %arrayvalue3, %value\
+    store i32 %ans, ptr %arrayidx3, align 4\
+    br label %60#d\
+  60:#i\
+    %61 = load i32, ptr %15, align 4\
+    %62 = add nsw i32 %61, 1\
+    store i32 %62, ptr %15, align 4\
+    br label %loop.condE, !llvm.loop !6#d\
+  loop.endZ:......\
+  loop.endY:......\
+]
+
+#h(2em) 接下来分析上述 Pattern 3 中的 LLVM IR，MMM 的逻辑结构类似于 MVM，其循环体结构如@MMM 所示。MMM 的操作应该在三层嵌套循环中执行，其中关键指令在最内层的循环体中执行。同理，`arrayidx#`表示 MVM 操作中矩阵或向量对应位置的数据的地址，`<i>, <j>, <k>` 表示循环条件变量，`%range_#` 表示对应的值。`icmp` 指令用来比较两个变量，并将比较后的结果存储在布尔变量 `%cmp#` 中，这条关键指令用于判断循环终止的条件。其中 `i32` 表示整数类型。上述 Pattern 中首先将向量乘法的结果赋值给输出变量 `%value`，然后进行累加将结果赋值给 `%ans`。因此，应该循环内部约束 `mul` 和 `add` 之间的依赖关系。总的来说，为了识别 MVM 加速模式，我们必须首先识别三层的嵌套循环结构，然后识别最内部循环中的乘法和加法指令。
+
+#figure(
+  image("./images/MMM.png", width: 100%),
+  caption: [
+    MMM 循环结构分析
+  ],
+) <MMM>
 
 == 本章小结
 
-本章主要描述了如何在 LLVM IR 中间表示上智能识别出可加速范式，并对四种典型的可加速计算范式分析了其所对应的循环结构的特征，进而编译器可以依据此来智能识别出 NPU 加速指令，充分利用 RISC-V 通用核心、NPU 加速核心的高效能特征。
+本章主要描述了如何在 LLVM IR 中间表示上智能识别出可加速范式，并对几种典型的可加速计算范式分析了其所对应的循环结构的特征，进而编译器可以依据此来智能识别出 NPU 加速指令，充分利用 RISC-V 通用核心、NPU 加速核心的高效能特征。
 
 #pagebreak()
 
@@ -652,7 +858,11 @@ LLVM IR 是 LLVM 编译器框架中的一种中间语言，它提供了一个抽
 
 == 动态指令调度
 
-所谓静态指令调度就是在编译阶段由编译器实现的指令调度，目的是通过调度尽量地减少程序执行时由于数据相关而导致的流水线暂停即处理器空转。所以静态指令调度方法也叫做编译器调度法。由于在编译阶段程序没有真正执行，有一些相关可能未被发现，这是静态指令调度根本无法解决的问题。
+所谓静态指令调度就是在编译阶段由编译器实现的指令调度，目的是通过调度尽量地减少程序执行时由于数据相关而导致的流水线暂停即处理器空转。所以静态指令调度方法也叫做编译器调度法。由于在编译阶段程序并没有真正执行，有一些相关可能未被发现，这是静态指令调度根本无法解决的问题。
+
+修改后的 LLVM IR 可以进一步编译为二进制可执行文件，然后在基于 RISC-V 存算一体模拟器中执行，
+
+开始时，所有指令和数据都存储在主存储器中。当程序开始运行时，CPU 负责调度指令。CIM 加速指令被卸载到 NPU 上，其他的指令仍然由 CPU 执行。当 CIM 加速指令完成后，将结果返回给 CPU，最后发送回主存。我们使用同步指令（Synchronous Instruction）来同步 CPU 和 NPU 上的计算。应用程序像调用本地函数一样调用 CIM 加速指令，直到返回结果才继续。因此，CPU 和 CIM 加速器之间不存在数据竞争。
 
 == 本章小结
 
