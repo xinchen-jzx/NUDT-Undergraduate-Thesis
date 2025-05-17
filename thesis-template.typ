@@ -197,12 +197,14 @@
   // align(center)[#text(size: 16pt, font: hei)[摘#h(1em)要]]
   heading([摘#h(1em)要], level: 6)
   v(16pt)
-  text(font: song, size: 12pt)[
-      随着AI技术逐渐渗透到各大应用场景，市场对算力的需求呈现爆发式增长。
+  text(font: song, size: 12pt)[      
+      SRAM 存算一体架构可以有效减少数据的无效搬运，具备突破冯诺依曼架构瓶颈的潜力。由于 RISC-V 指令集具有开源开放、扩展性强等优势，已经逐渐成为构建存算一体芯片的首选。然而，基于 RISC-V 构建的存算芯片具有异构、碎片化的特点，这就要求开发者面向不同存算架构开发多个版本的应用，开发效率低、部署难。因此，如何实现将软件操作（包括计算、数据通信等）和硬件配置（如异构计算单元、存储层次等）解耦，以便 AI 应用开发不再依赖存算 IP 设计，是解决“编程墙”的关键问题。
 
-      因此本研究致力于解决上述难题，主要研究了
+      不仅如此，AI应用的不规则的发展趋势和存算芯片的异构化、碎片化的现状，使得我们需要探索新的动态编译优化方法，这种优化方法既需要能够充分的考虑到AI应用的动态变化的特质，又需要能够充分的挖掘未来存算芯片的架构特征。通过动态编译优化，可以实时调整编译策略，使得生成的代码能够更好地适应硬件的运行环境，提高计算效率和资源利用率。
 
-      通过测试表明，本文实现的编译器能够将应用算子自动映射到具有不同IP设计的加速部件，根据不同芯片架构特征生成正确的指令流来协调各个计算部件，挖掘芯片内部的计算并行性。
+      因此本研究致力于解决上述难题，构建一个可以面向 RISC-V SRAM 存算一体芯片进行自动后端优化的编译器系统。编译器对应用程序进行应用特征分析，识别出可以加速的计算部分，并转为特定的 RISC-V 加速指令，充分利用 RISC-V 已有指令集实现在执行 AI 任务运行时对各类计算资源的灵活调度，充分发挥SRAM存算一体阵列高能效、高算力密度的硬件优势。
+
+      通过测试表明，本文实现的编译器能够对预训练神经网络模型进行优化、将应用算子自动映射到具有不同IP设计的加速部件，根据不同芯片架构特征生成正确的指令流来协调各个计算部件，挖掘芯片内部的计算并行性以及基于目标体系结构的代码生成。
   ]
   v(0pt)
   text(font: hei, size: 12pt)[关键词：]
@@ -220,7 +222,15 @@
   // align(center)[#text(size: 16pt, font: tnr, weight: "bold", "ABSTRACT")]
   heading([ABSTRACT], level: 6)
   v(16pt)
-  text(font: song, size: 12pt)[Abstract.]
+  text(font: song, size: 12pt)[
+    The SRAM _Computing-in-Memory_ (CIM) architecture can effectively reduce the ineffective transfer of data and has the potential to break through the bottleneck of the von Neumann architecture. Due to the advantages of open source and strong scalability of the RISC-V instruction set, it has gradually become the first choice for building computing-in-memory chips. However, the computing-in-memory chips built on RISC-V are heterogeneous and fragmented, which requires developers to develop multiple versions of applications for different storage-computing architectures, which is inefficient and difficult to deploy. Therefore, how to decouple software operations (including computing, data communication, etc.) and hardware configurations (such as heterogeneous computing units, storage levels, etc.) so that AI application development no longer relies on computing-in-memory IP design is the key issue in solving the "programming wall".
+
+    Not only that, the irregular development trend of AI applications and the heterogeneous and fragmented status of computing-in-memory chips require us to explore new dynamic compilation optimization methods, which need to fully consider the dynamic characteristics of AI applications and fully explore the architectural characteristics of future computing-in-memory chips. Through dynamic compilation optimization, the compilation strategy can be adjusted in real time, so that the generated code can better adapt to the hardware operating environment and improve computing efficiency and resource utilization.
+
+    Therefore, this study is committed to solving the above problems and building a compiler system that can automatically optimize the backend for RISC-V SRAM CIM chips. The compiler analyzes the application characteristics of the application, identifies the computing parts that can be accelerated, and converts them into specific RISC-V acceleration instructions, making full use of the existing RISC-V instruction set to realize the flexible scheduling of various computing resources when executing AI tasks, and giving full play to the hardware advantages of high energy efficiency and high computing power density of SRAM storage and computing integrated arrays.
+
+    Experimental results shows that the compiler implemented in this paper can optimize the pre-trained neural network model, automatically map the application operator to the acceleration component with different IP designs, generate the correct instruction stream according to the characteristics of different chip architectures to coordinate the various computing components, explore the computing parallelism inside the chip, and generate code based on the target architecture.
+  ]
   v(0pt)
   text(font: hei, size: 12pt, weight: "bold")[KEY WORDS: ]
   text(font: song, size: 12pt)[Deep Learning Compiler, LLVM Compiler, Scheduler, Computing in Memory]
