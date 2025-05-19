@@ -202,7 +202,7 @@
 
       不仅如此，AI应用的不规则的发展趋势和存算芯片的异构化、碎片化的现状，使得我们需要探索新的动态编译优化方法，这种优化方法既需要能够充分的考虑到AI应用的动态变化的特质，又需要能够充分的挖掘未来存算芯片的架构特征。通过动态编译优化，可以实时调整编译策略，使得生成的代码能够更好地适应硬件的运行环境，提高计算效率和资源利用率。
 
-      因此本研究致力于解决上述难题，构建一个可以面向 RISC-V SRAM 存算一体芯片进行自动后端优化的编译器系统。编译器对应用程序进行应用特征分析，识别出可以加速的计算部分，并转为特定的 RISC-V 加速指令，充分利用 RISC-V 已有指令集实现在执行 AI 任务运行时对各类计算资源的灵活调度，充分发挥SRAM存算一体阵列高能效、高算力密度的硬件优势。
+      因此本研究致力于解决上述难题，将面向 RISC-V SRAM 存算一体芯片修改 LLVM 编译器，实现对存算指令的支持，这包括但不限于对指令集的扩展、内存模型的适配、NPU 指令的智能识别、指令调度以及优化策略的调整等。通过对应用程序进行应用特征分析，识别出可以加速的计算部分，并转为特定的 RISC-V 加速指令，充分利用 RISC-V 已有指令集实现在执行 AI 任务运行时对各类计算资源的灵活调度，充分发挥SRAM存算一体阵列高能效、高算力密度的硬件优势。
 
       通过测试表明，本文实现的编译器能够对预训练神经网络模型进行优化、将应用算子自动映射到具有不同IP设计的加速部件，根据不同芯片架构特征生成正确的指令流来协调各个计算部件，挖掘芯片内部的计算并行性以及基于目标体系结构的代码生成。
   ]
@@ -227,7 +227,7 @@
 
     Not only that, the irregular development trend of AI applications and the heterogeneous and fragmented status of computing-in-memory chips require us to explore new dynamic compilation optimization methods, which need to fully consider the dynamic characteristics of AI applications and fully explore the architectural characteristics of future computing-in-memory chips. Through dynamic compilation optimization, the compilation strategy can be adjusted in real time, so that the generated code can better adapt to the hardware operating environment and improve computing efficiency and resource utilization.
 
-    Therefore, this study is committed to solving the above problems and building a compiler system that can automatically optimize the backend for RISC-V SRAM CIM chips. The compiler analyzes the application characteristics of the application, identifies the computing parts that can be accelerated, and converts them into specific RISC-V acceleration instructions, making full use of the existing RISC-V instruction set to realize the flexible scheduling of various computing resources when executing AI tasks, and giving full play to the hardware advantages of high energy efficiency and high computing power density of SRAM storage and computing integrated arrays.
+    Therefore, this project is committed to solving the above problems. The LLVM compiler will be modified for RISC-V SRAM CIM chips to support CIM instructions, including but not limited to the expansion of the instruction set, the adaptation of the memory model, the intelligent identification of NPU instructions, instruction scheduling, and the adjustment of optimization strategies. By analyzing the application characteristics of the application, the computing parts that can be accelerated are identified and converted into specific RISC-V acceleration instructions, and the existing RISC-V instruction set is fully utilized to realize the flexible scheduling of various computing resources when executing AI tasks, giving full play to the hardware advantages of the high energy efficiency and high computing density of the SRAM storage and computing integrated array.
 
     Experimental results shows that the compiler implemented in this paper can optimize the pre-trained neural network model, automatically map the application operator to the acceleration component with different IP designs, generate the correct instruction stream according to the characteristics of different chip architectures to coordinate the various computing components, explore the computing parallelism inside the chip, and generate code based on the target architecture.
   ]
@@ -303,9 +303,9 @@
   text(font: song, size: 12pt)[
     落笔于此，湘江畔的梧桐已悄然历经四度春秋。回首这四年的点点滴滴，心中充满了无尽的感慨与思绪。在毕业论文完成之际，我愿将这四年的经历与感悟凝聚成文字，向求学路上给予我帮助的师长和亲友表达我最真挚的谢意。
 
-    师恩如海，深不可测。首先，我要特别感谢我的导师曾坤老师和王晨曦老师以及田值良  。从初入大学时的懵懂无知，到如今能够独立完成毕业设计，曾坤老师始终是我前行路上的明灯。他不仅在学术上给予我悉心的指导，帮助我拓宽视野，提升能力，还在生活中给予我无微不至的关怀，让我感受到如家人般的温暖。在这次毕业设计的过程中，从选题到实验，从撰文到定稿，曾坤老师和王晨曦老师的全程指导让我受益匪浅。每一次对实验结果的精益求精，每一次对论文的反复修改，都让我深刻体会到曾坤老师在科研工作中的严谨态度和对学生的严格要求。在师门的四年时光里，曾坤老师不仅传授给我学术知识，更教会了我踏实、认真、负责、勤勉的品质，这些品质将伴随我一生，无论是在科研还是其他工作中，甚至在日常生活中。在此论文完成之际，我衷心感谢曾坤老师一路以来的教导、呵护与关怀。
+    师恩如海，深不可测。首先，我要特别感谢我的导师曾坤老师和王晨曦老师以及田值良  。从初入大学时的懵懂无知，到如今能够独立完成毕业设计，曾坤老师始终是我前行路上的明灯。他不仅在学术上给予我悉心的指导，帮助我拓宽视野，提升能力，还在生活中给予我无微不至的关怀，让我感受到如家人般的温暖。在这次毕业设计的过程中，从选题到实验，从撰文到定稿，曾坤老师和王晨曦老师的全程指导让我受益匪浅。每一次对实验结果的精益求精，每一次对论文的反复修改，都让我深刻体会到曾坤老师和王晨曦老师在科研工作中的严谨态度和对学生的严格要求。在师门的四年时光里，曾坤老师不仅传授给我学术知识，更教会了我踏实、认真、负责、勤勉的品质，这些品质将伴随我一生，无论是在科研还是其他工作中，甚至在日常生活中。在此论文完成之际，我衷心感谢曾坤老师一路以来的教导、呵护与关怀。
 
-    
+    我还要感谢我的大学：国防科技大学，从军事训练场上的烈日蝉鸣，到毕业设计时的协同攻坚，与室友们一同度过的那些时光，至今仍历历在目；我还要感谢文智华师哥，师哥带我进入了科研的大门，让我体会到了科研的乐趣；四年的求学路上有这样的朋友们是一件非常幸运的事情，感谢他们的陪伴和照顾，愿我们友谊长存。
 
     最后的最后，我要感谢我的父母，生育之恩，终身难忘。感谢他们在我十多年的学习生涯中的支持与鼓励。父母总是在我身后，默默的支持着我。失落时，他们总会轻轻敲开我心锁，支持我继续前行。在这里我要再次深深感谢我的父母。在未来的科研道路上，我要定当秉承“银河精神”，以科研为剑，以家国为盾，焕发属于新时代青年的正能量。
   ]
