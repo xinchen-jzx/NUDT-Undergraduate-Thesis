@@ -42,9 +42,41 @@
   year={2021},
 }
 
+@misc{Fashion-MNIST17,
+  title={Fashion-MNIST: a Novel Image Dataset for Benchmarking Machine Learning Algorithms}, 
+  author={Han Xiao and Kashif Rasul and Roland Vollgraf},
+  year={2017},
+  eprint={1708.07747},
+  archivePrefix={arXiv},
+  primaryClass={cs.LG},
+  url={https://arxiv.org/abs/1708.07747}, 
+}
+
+@ARTICLE{MNIST12,
+  author={Deng, Li},
+  journal={IEEE Signal Processing Magazine}, 
+  title={The MNIST Database of Handwritten Digit Images for Machine Learning Research [Best of the Web]}, 
+  year={2012},
+  volume={29},
+  number={6},
+  pages={141-142},
+  keywords={Machine learning},
+  doi={10.1109/MSP.2012.2211477}
+}
+
 @misc{IREE19,
   title = {iree},
   publisher = {https://github.com/iree-org/iree},
+}
+
+@misc{SHD24,
+  title = {Comprehensive version of the RISC-V Market Analysis Report},
+  publisher = {https://www.newswire.com/news/the-shd-group-has-released-a-complimentary-version-of-the-2024-risc-v-22213417},
+}
+
+@misc{intel,
+  title = {7 nm lithography process },
+  publisher = {https://en.wikichip.org/wiki/7_nm_lithography_process},
 }
 
 @inproceedings{RelayIR18,
@@ -154,6 +186,61 @@
   doi={10.1109/JSSC.2017.2778281}
 }
 
+@INPROCEEDINGS{3D-stacked11,
+  author={Weis, Christian and Wehn, Norbert and Igor, Loi and Benini, Luca},
+  booktitle={2011 Design, Automation & Test in Europe}, 
+  title={Design space exploration for 3D-stacked DRAMs}, 
+  year={2011},
+  volume={},
+  number={},
+  pages={1-6},
+  keywords={Random access memory;Tiles;Three dimensional displays;Organizations;Through-silicon vias;Integrated circuit modeling;Wiring},
+  doi={10.1109/DATE.2011.5763068}
+}
+
+@INPROCEEDINGS{UPMEM24,
+  author={Hyun, Bongjoon and Kim, Taehun and Lee, Dongjae and Rhu, Minsoo},
+  booktitle={2024 IEEE International Symposium on High-Performance Computer Architecture (HPCA)}, 
+  title={Pathfinding Future PIM Architectures by Demystifying a Commercial PIM Technology}, 
+  year={2024},
+  volume={},
+  number={},
+  pages={263-279},
+  keywords={Microarchitecture;Source coding;Computer architecture;Parallel processing;Vectors;Distance measurement;Processing-In-Memory (PIM);Near-Memory Processing;Parallel Architecture},
+  doi={10.1109/HPCA57654.2024.00029}
+}
+
+
+@inproceedings{AMBit17,
+  author = {Seshadri, Vivek and Lee, Donghyuk and Mullins, Thomas and Hassan, Hasan and Boroumand, Amirali and Kim, Jeremie and Kozuch, Michael A. and Mutlu, Onur and Gibbons, Phillip B. and Mowry, Todd C.},
+  title = {Ambit: in-memory accelerator for bulk bitwise operations using commodity DRAM technology},
+  year = {2017},
+  isbn = {9781450349529},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  url = {https://doi.org/10.1145/3123939.3124544},
+  doi = {10.1145/3123939.3124544},
+  abstract = {Many important applications trigger bulk bitwise operations, i.e., bitwise operations on large bit vectors. In fact, recent works design techniques that exploit fast bulk bitwise operations to accelerate databases (bitmap indices, BitWeaving) and web search (BitFunnel). Unfortunately, in existing architectures, the throughput of bulk bitwise operations is limited by the memory bandwidth available to the processing unit (e.g., CPU, GPU, FPGA, processing-in-memory).To overcome this bottleneck, we propose Ambit, an Accelerator-in-Memory for bulk bitwise operations. Unlike prior works, Ambit exploits the analog operation of DRAM technology to perform bitwise operations completely inside DRAM, thereby exploiting the full internal DRAM bandwidth. Ambit consists of two components. First, simultaneous activation of three DRAM rows that share the same set of sense amplifiers enables the system to perform bitwise AND and OR operations. Second, with modest changes to the sense amplifier, the system can use the inverters present inside the sense amplifier to perform bitwise NOT operations. With these two components, Ambit can perform any bulk bitwise operation efficiently inside DRAM. Ambit largely exploits existing DRAM structure, and hence incurs low cost on top of commodity DRAM designs (1\% of DRAM chip area). Importantly, Ambit uses the modern DRAM interface without any changes, and therefore it can be directly plugged onto the memory bus.Our extensive circuit simulations show that Ambit works as expected even in the presence of significant process variation. Averaged across seven bulk bitwise operations, Ambit improves performance by 32X and reduces energy consumption by 35X compared to state-of-the-art systems. When integrated with Hybrid Memory Cube (HMC), a 3D-stacked DRAM with a logic layer, Ambit improves performance of bulk bitwise operations by 9.7X compared to processing in the logic layer of the HMC. Ambit improves the performance of three real-world data-intensive applications, 1) database bitmap indices, 2) BitWeaving, a technique to accelerate database scans, and 3) bit-vector-based implementation of sets, by 3X-7X compared to a state-of-the-art baseline using SIMD optimizations. We describe four other applications that can benefit from Ambit, including a recent technique proposed to speed up web search. We believe that large performance and energy improvements provided by Ambit can enable other applications to use bulk bitwise operations.},
+  booktitle = {Proceedings of the 50th Annual IEEE/ACM International Symposium on Microarchitecture},
+  pages = {273–287},
+  numpages = {15},
+  keywords = {processing-in-memory, performance, memory bandwidth, energy, databases, bulk bitwise operations, DRAM},
+  location = {Cambridge, Massachusetts},
+  series = {MICRO-50 '17}
+}
+
+@INPROCEEDINGS{Samsung-PIM23,
+  author={Kim, Jin Hyun and Ro, Yuhwan and So, Jinin and Lee, Sukhan and Kang, Shin-haeng and Cho, YeonGon and Kim, Hyeonsu and Kim, Byeongho and Kim, Kyungsoo and Park, Sangsoo and Kim, Jin-Seong and Cha, Sanghoon and Lee, Won-Jo and Jung, Jin and Lee, Jong-Geon and Lee, Jieun and Song, JoonHo and Lee, Seungwon and Cho, Jeonghyeon and Yu, Jaehoon and Sohn, Kyomin},
+  booktitle={2023 IEEE Hot Chips 35 Symposium (HCS)}, 
+  title={Samsung PIM/PNM for Transfmer Based AI : Energy Efficiency on PIM/PNM Cluster}, 
+  year={2023},
+  volume={},
+  number={},
+  pages={1-31},
+  keywords={Energy efficiency;Artificial intelligence},
+  doi={10.1109/HCS59251.2023.10254711}}
+
+
 @ARTICLE{RISC-V,
   author={Cui, Enfang and Li, Tianzheng and Wei, Qian},
   journal={IEEE Access}, 
@@ -222,6 +309,28 @@
   url={https://arxiv.org/abs/1511.08458}, 
 }
 
+@inproceedings{translation22,
+  title = "Confidence Based Bidirectional Global Context Aware Training Framework for Neural Machine Translation",
+  author = "Zhou, Chulun  and
+    Meng, Fandong  and
+    Zhou, Jie  and
+    Zhang, Min  and
+    Wang, Hongji  and
+    Su, Jinsong",
+  editor = "Muresan, Smaranda  and
+    Nakov, Preslav  and
+    Villavicencio, Aline",
+  booktitle = "Proceedings of the 60th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)",
+  month = may,
+  year = "2022",
+  address = "Dublin, Ireland",
+  publisher = "Association for Computational Linguistics",
+  url = "https://aclanthology.org/2022.acl-long.206/",
+  doi = "10.18653/v1/2022.acl-long.206",
+  pages = "2878--2889",
+  abstract = "Most dominant neural machine translation (NMT) models are restricted to make predictions only according to the local context of preceding words in a left-to-right manner. Although many previous studies try to incorporate global information into NMT models, there still exist limitations on how to effectively exploit bidirectional global context. In this paper, we propose a Confidence Based Bidirectional Global Context Aware (CBBGCA) training framework for NMT, where the NMT model is jointly trained with an auxiliary conditional masked language model (CMLM). The training consists of two stages: (1) multi-task joint training; (2) confidence based knowledge distillation. At the first stage, by sharing encoder parameters, the NMT model is additionally supervised by the signal from the CMLM decoder that contains bidirectional global contexts. Moreover, at the second stage, using the CMLM as teacher, we further pertinently incorporate bidirectional global context to the NMT model on its unconfidently-predicted target words via knowledge distillation. Experimental results show that our proposed CBBGCA training framework significantly improves the NMT model by +1.02, +1.30 and +0.57 BLEU scores on three large-scale translation datasets, namely WMT`14 English-to-German, WMT`19 Chinese-to-English and WMT`14 English-to-French, respectively."
+}
+
 @article{RNN20,
   title={Fundamentals of Recurrent Neural Network (RNN) and Long Short-Term Memory (LSTM) network},
   volume={404},
@@ -266,6 +375,28 @@
   pages={873-876},
   year={2010},
 }
+
+@article{Intro24,
+  title={存算一体芯片发展现状、趋势与挑战},
+  author={康旺 and 寇竞 and 赵巍胜},
+  journal={中国科学(信息科学)},
+  issue={1},
+  pages={16-24},
+  year={2024},
+}
+
+@ARTICLE{RxNN21,
+  author={Jain, Shubham and Sengupta, Abhronil and Roy, Kaushik and Raghunathan, Anand},
+  journal={IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems}, 
+  title={RxNN: A Framework for Evaluating Deep Neural Networks on Resistive Crossbars}, 
+  year={2021},
+  volume={40},
+  number={2},
+  pages={326-338},
+  keywords={Computational modeling;Integrated circuit modeling;Hardware;Virtual machine monitors;Biological neural networks;Resistance;Sensors;Analog computing;artificial intelligence;crossbar modeling;crossbar nonidealities;deep neural networks (DNNs);in-memory computing;machine learning;nonvolatile memory;resistive crossbar;vector-matrix multiplication (VMM)},
+  doi={10.1109/TCAD.2020.3000185}
+}
+
 
 @INPROCEEDINGS{PRIME16,
   author={Chi, Ping and Li, Shuangchen and Xu, Cong and Zhang, Tao and Zhao, Jishen and Liu, Yongpan and Wang, Yu and Xie, Yuan},
