@@ -1,0 +1,460 @@
+@inproceedings {TVM18,
+  author = {Tianqi Chen and Thierry Moreau and Ziheng Jiang and Lianmin Zheng and Eddie Yan and Haichen Shen and Meghan Cowan and Leyuan Wang and Yuwei Hu and Luis Ceze and Carlos Guestrin and Arvind Krishnamurthy},
+  title = {{TVM}: An Automated {End-to-End} Optimizing Compiler for Deep Learning},
+  booktitle = {13th USENIX Symposium on Operating Systems Design and Implementation (OSDI 18)},
+  year = {2018},
+  isbn = {978-1-939133-08-3},
+  address = {Carlsbad, CA},
+  pages = {578--594},
+  url = {https://www.usenix.org/conference/osdi18/presentation/chen},
+  publisher = {USENIX Association},
+  month = oct
+}
+
+@inproceedings{Triton19,
+  author = {Tillet, Philippe and Kung, H. T. and Cox, David},
+  title = {Triton: an intermediate language and compiler for tiled neural network computations},
+  year = {2019},
+  isbn = {9781450367196},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  url = {https://doi.org/10.1145/3315508.3329973},
+  doi = {10.1145/3315508.3329973},
+  abstract = {The validation and deployment of novel research ideas in the field of Deep Learning is often limited by the availability of efficient compute kernels for certain basic primitives. In particular, operations that cannot leverage existing vendor libraries (e.g., cuBLAS, cuDNN) are at risk of facing poor device utilization unless custom implementations are written by experts – usually at the expense of portability. For this reason, the development of new programming abstractions for specifying custom Deep Learning workloads at a minimal performance cost has become crucial. We present Triton, a language and compiler centered around the concept of tile, i.e., statically shaped multi-dimensional sub-arrays. Our approach revolves around (1) a C-based language and an LLVM-based intermediate representation (IR) for expressing tensor programs in terms of operations on parametric tile variables and (2) a set of novel tile-level optimization passes for compiling these programs into efficient GPU code. We demonstrate how Triton can be used to build portable implementations of matrix multiplication and convolution kernels on par with hand-tuned vendor libraries (cuBLAS / cuDNN), or for efficiently implementing recent research ideas such as shift convolutions.},
+  booktitle = {Proceedings of the 3rd ACM SIGPLAN International Workshop on Machine Learning and Programming Languages},
+  pages = {10–19},
+  numpages = {10},
+  keywords = {neural networks, compiler, GPU},
+  location = {Phoenix, AZ, USA},
+  series = {MAPL 2019}
+}
+
+@misc{XLA23,
+  title	= {XLA : Compiling Machine Learning for Peak Performance},
+  author	= {Amit Sabne},
+  year	= {2020}
+}
+
+@inproceedings{AKG21,
+  title={AKG: automatic kernel generation for neural processing units using polyhedral transformations},
+  author={Zhao, Jie and Li, Bojie and Nie, Wang and Geng, Zhen and Zhang, Renwei and Gao, Xiong and Cheng, Bin and Wu, Chen and Cheng, Yun and Li, Zheng and Di, Peng and Zhang, Kun and Jin, Xuefeng},
+  booktitle={PLDI 2021: Proceedings of the 42nd ACM SIGPLAN International Conference on Programming Language Design and Implementation},
+  year={2021},
+}
+
+@misc{Fashion-MNIST17,
+  title={Fashion-MNIST: a Novel Image Dataset for Benchmarking Machine Learning Algorithms}, 
+  author={Han Xiao and Kashif Rasul and Roland Vollgraf},
+  year={2017},
+  eprint={1708.07747},
+  archivePrefix={arXiv},
+  primaryClass={cs.LG},
+  url={https://arxiv.org/abs/1708.07747}, 
+}
+
+@ARTICLE{MNIST12,
+  author={Deng, Li},
+  journal={IEEE Signal Processing Magazine}, 
+  title={The MNIST Database of Handwritten Digit Images for Machine Learning Research [Best of the Web]}, 
+  year={2012},
+  volume={29},
+  number={6},
+  pages={141-142},
+  keywords={Machine learning},
+  doi={10.1109/MSP.2012.2211477}
+}
+
+@misc{IREE19,
+  title = {iree},
+  publisher = {https://github.com/iree-org/iree},
+}
+
+@misc{SHD24,
+  title = {Comprehensive version of the RISC-V Market Analysis Report},
+  publisher = {https://www.newswire.com/news/the-shd-group-has-released-a-complimentary-version-of-the-2024-risc-v-22213417},
+}
+
+@misc{intel,
+  title = {7 nm lithography process },
+  publisher = {https://en.wikichip.org/wiki/7_nm_lithography_process},
+}
+
+@inproceedings{RelayIR18,
+  author = {Roesch, Jared and Lyubomirsky, Steven and Weber, Logan and Pollock, Josh and Kirisame, Marisa and Chen, Tianqi and Tatlock, Zachary},
+  title = {Relay: a new IR for machine learning frameworks},
+  year = {2018},
+  isbn = {9781450358347},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  url = {https://doi.org/10.1145/3211346.3211348},
+  doi = {10.1145/3211346.3211348},
+  abstract = {Machine learning powers diverse services in industry including search, translation, recommendation systems, and security. The scale and importance of these models require that they be efficient, expressive, and portable across an array of heterogeneous hardware devices. These constraints are often at odds; in order to better accommodate them we propose a new high-level intermediate representation (IR) called Relay. Relay is being designed as a purely-functional, statically-typed language with the goal of balancing efficient compilation, expressiveness, and portability. We discuss the goals of Relay and highlight its important design constraints. Our prototype is part of the open source NNVM compiler framework, which powers Amazon's deep learning framework MxNet.},
+  booktitle = {Proceedings of the 2nd ACM SIGPLAN International Workshop on Machine Learning and Programming Languages},
+  pages = {58–68},
+  numpages = {11},
+  keywords = {machine learning, intermediate representation, differentiable programming, compilers},
+  location = {Philadelphia, PA, USA},
+  series = {MAPL 2018}
+}
+
+@inproceedings{TensorIR23,
+  author = {Feng, Siyuan and Hou, Bohan and Jin, Hongyi and Lin, Wuwei and Shao, Junru and Lai, Ruihang and Ye, Zihao and Zheng, Lianmin and Yu, Cody Hao and Yu, Yong and Chen, Tianqi},
+  title = {TensorIR: An Abstraction for Automatic Tensorized Program Optimization},
+  year = {2023},
+  isbn = {9781450399166},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  url = {https://doi.org/10.1145/3575693.3576933},
+  doi = {10.1145/3575693.3576933},
+  abstract = {Deploying deep learning models on various devices has become an important topic. The wave of hardware specialization brings a diverse set of acceleration primitives for multi-dimensional ten- sor computations. These new acceleration primitives, along with the emerging machine learning models, bring tremendous engineering challenges. In this paper, we present TensorIR, a compiler abstraction for optimizing programs with these tensor computation primitives. TensorIR generalizes the loop nest representation used in existing machine learning compilers to bring tensor computation as the first-class citizen. Finally, we build an end-to-end framework on top of our abstraction to automatically optimize deep learning models for given tensor computation primitives. Experimental results show that TensorIR compilation automatically uses the tensor computation primitives for given hardware backends and delivers performance that is competitive to state-of-art hand-optimized systems across platforms.},
+  booktitle = {Proceedings of the 28th ACM International Conference on Architectural Support for Programming Languages and Operating Systems, Volume 2},
+  pages = {804–817},
+  numpages = {14},
+  keywords = {Tensor Computation, Machine Learning Compiler, Deep Neural Network},
+  location = {Vancouver, BC, Canada},
+  series = {ASPLOS 2023}
+}
+
+@article{DianNao16,
+  author = {Chen, Yunji and Chen, Tianshi and Xu, Zhiwei and Sun, Ninghui and Temam, Olivier},
+  title = {DianNao family: energy-efficient hardware accelerators for machine learning},
+  year = {2016},
+  issue_date = {November 2016},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  volume = {59},
+  number = {11},
+  issn = {0001-0782},
+  url = {https://doi.org/10.1145/2996864},
+  doi = {10.1145/2996864},
+  abstract = {Machine Learning (ML) tasks are becoming pervasive in a broad range of applications, and in a broad range of systems (from embedded systems to data centers). As computer architectures evolve toward heterogeneous multi-cores composed of a mix of cores and hardware accelerators, designing hardware accelerators for ML techniques can simultaneously achieve high efficiency and broad application scope.While efficient computational primitives are important for a hardware accelerator, inefficient memory transfers can potentially void the throughput, energy, or cost advantages of accelerators, that is, an Amdahl's law effect, and thus, they should become a first-order concern, just like in processors, rather than an element factored in accelerator design on a second step. In this article, we introduce a series of hardware accelerators (i.e., the DianNao family) designed for ML (especially neural networks), with a special emphasis on the impact of memory on accelerator design, performance, and energy. We show that, on a number of representative neural network layers, it is possible to achieve a speedup of 450.65x over a GPU, and reduce the energy by 150.31x on average for a 64-chip DaDianNao system (a member of the DianNao family).<!-- END_PAGE_1 -->},
+  journal = {Commun. ACM},
+  month = oct,
+  pages = {105–112},
+  numpages = {8}
+}
+
+@inproceedings{TPU16,
+  author = {Jouppi, Norman P. and Young, Cliff and Patil, Nishant and Patterson, David and Agrawal, Gaurav and Bajwa, Raminder and Bates, Sarah and Bhatia, Suresh and Boden, Nan and Borchers, Al and Boyle, Rick and Cantin, Pierre-luc and Chao, Clifford and Clark, Chris and Coriell, Jeremy and Daley, Mike and Dau, Matt and Dean, Jeffrey and Gelb, Ben and Ghaemmaghami, Tara Vazir and Gottipati, Rajendra and Gulland, William and Hagmann, Robert and Ho, C. Richard and Hogberg, Doug and Hu, John and Hundt, Robert and Hurt, Dan and Ibarz, Julian and Jaffey, Aaron and Jaworski, Alek and Kaplan, Alexander and Khaitan, Harshit and Killebrew, Daniel and Koch, Andy and Kumar, Naveen and Lacy, Steve and Laudon, James and Law, James and Le, Diemthu and Leary, Chris and Liu, Zhuyuan and Lucke, Kyle and Lundin, Alan and MacKean, Gordon and Maggiore, Adriana and Mahony, Maire and Miller, Kieran and Nagarajan, Rahul and Narayanaswami, Ravi and Ni, Ray and Nix, Kathy and Norrie, Thomas and Omernick, Mark and Penukonda, Narayana and Phelps, Andy and Ross, Jonathan and Ross, Matt and Salek, Amir and Samadiani, Emad and Severn, Chris and Sizikov, Gregory and Snelham, Matthew and Souter, Jed and Steinberg, Dan and Swing, Andy and Tan, Mercedes and Thorson, Gregory and Tian, Bo and Toma, Horia and Tuttle, Erick and Vasudevan, Vijay and Walter, Richard and Wang, Walter and Wilcox, Eric and Yoon, Doe Hyun},
+  title = {In-Datacenter Performance Analysis of a Tensor Processing Unit},
+  year = {2017},
+  isbn = {9781450348928},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  url = {https://doi.org/10.1145/3079856.3080246},
+  doi = {10.1145/3079856.3080246},
+  abstract = {Many architects believe that major improvements in cost-energy-performance must now come from domain-specific hardware. This paper evaluates a custom ASIC---called a Tensor Processing Unit (TPU) --- deployed in datacenters since 2015 that accelerates the inference phase of neural networks (NN). The heart of the TPU is a 65,536 8-bit MAC matrix multiply unit that offers a peak throughput of 92 TeraOps/second (TOPS) and a large (28 MiB) software-managed on-chip memory. The TPU's deterministic execution model is a better match to the 99th-percentile response-time requirement of our NN applications than are the time-varying optimizations of CPUs and GPUs that help average throughput more than guaranteed latency. The lack of such features helps explain why, despite having myriad MACs and a big memory, the TPU is relatively small and low power. We compare the TPU to a server-class Intel Haswell CPU and an Nvidia K80 GPU, which are contemporaries deployed in the same datacenters. Our workload, written in the high-level TensorFlow framework, uses production NN applications (MLPs, CNNs, and LSTMs) that represent 95\% of our datacenters' NN inference demand. Despite low utilization for some applications, the TPU is on average about 15X -- 30X faster than its contemporary GPU or CPU, with TOPS/Watt about 30X -- 80X higher. Moreover, using the CPU's GDDR5 memory in the TPU would triple achieved TOPS and raise TOPS/Watt to nearly 70X the GPU and 200X the CPU.},
+  booktitle = {Proceedings of the 44th Annual International Symposium on Computer Architecture},
+  pages = {1–12},
+  numpages = {12},
+  keywords = {CNN, DNN, GPU, LSTM, MLP, RNN, TPU, TensorFlow, accelerator, deep learning, domain-specific architecture, neural network},
+  location = {Toronto, ON, Canada},
+  series = {ISCA '17}
+}
+
+@ARTICLE{Eyeriss17,
+  author={Chen, Yu-Hsin and Krishna, Tushar and Emer, Joel S. and Sze, Vivienne},
+  journal={IEEE Journal of Solid-State Circuits}, 
+  title={Eyeriss: An Energy-Efficient Reconfigurable Accelerator for Deep Convolutional Neural Networks}, 
+  year={2017},
+  volume={52},
+  number={1},
+  pages={127-138},
+  keywords={Shape;Random access memory;Computer architecture;Throughput;Clocks;Neural networks;Hardware;Convolutional neural networks (CNNs);dataflow processing;deep learning;energy-efficient accelerators;spatial architecture},
+  doi={10.1109/JSSC.2016.2616357}
+}
+
+@misc{Eyerissv219,
+  title={Eyeriss v2: A Flexible Accelerator for Emerging Deep Neural Networks on Mobile Devices}, 
+  author={Yu-Hsin Chen and Tien-Ju Yang and Joel Emer and Vivienne Sze},
+  year={2019},
+  eprint={1807.07928},
+  archivePrefix={arXiv},
+  primaryClass={cs.DC},
+  url={https://arxiv.org/abs/1807.07928}, 
+}
+
+@ARTICLE{CGRA18,
+  author={Yin, Shouyi and Ouyang, Peng and Tang, Shibin and Tu, Fengbin and Li, Xiudong and Zheng, Shixuan and Lu, Tianyi and Gu, Jiangyuan and Liu, Leibo and Wei, Shaojun},
+  journal={IEEE Journal of Solid-State Circuits}, 
+  title={A High Energy Efficient Reconfigurable Hybrid Neural Network Processor for Deep Learning Applications}, 
+  year={2018},
+  volume={53},
+  number={4},
+  pages={968-982},
+  keywords={Artificial neural networks;Arrays;Acceleration;Throughput;Speech recognition;Energy efficiency;hybrid neural networks (hybrid-NNs);memory banking;reconfigurable computing;resource partitioning},
+  doi={10.1109/JSSC.2017.2778281}
+}
+
+@INPROCEEDINGS{3D-stacked11,
+  author={Weis, Christian and Wehn, Norbert and Igor, Loi and Benini, Luca},
+  booktitle={2011 Design, Automation & Test in Europe}, 
+  title={Design space exploration for 3D-stacked DRAMs}, 
+  year={2011},
+  volume={},
+  number={},
+  pages={1-6},
+  keywords={Random access memory;Tiles;Three dimensional displays;Organizations;Through-silicon vias;Integrated circuit modeling;Wiring},
+  doi={10.1109/DATE.2011.5763068}
+}
+
+@INPROCEEDINGS{UPMEM24,
+  author={Hyun, Bongjoon and Kim, Taehun and Lee, Dongjae and Rhu, Minsoo},
+  booktitle={2024 IEEE International Symposium on High-Performance Computer Architecture (HPCA)}, 
+  title={Pathfinding Future PIM Architectures by Demystifying a Commercial PIM Technology}, 
+  year={2024},
+  volume={},
+  number={},
+  pages={263-279},
+  keywords={Microarchitecture;Source coding;Computer architecture;Parallel processing;Vectors;Distance measurement;Processing-In-Memory (PIM);Near-Memory Processing;Parallel Architecture},
+  doi={10.1109/HPCA57654.2024.00029}
+}
+
+
+@inproceedings{AMBit17,
+  author = {Seshadri, Vivek and Lee, Donghyuk and Mullins, Thomas and Hassan, Hasan and Boroumand, Amirali and Kim, Jeremie and Kozuch, Michael A. and Mutlu, Onur and Gibbons, Phillip B. and Mowry, Todd C.},
+  title = {Ambit: in-memory accelerator for bulk bitwise operations using commodity DRAM technology},
+  year = {2017},
+  isbn = {9781450349529},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  url = {https://doi.org/10.1145/3123939.3124544},
+  doi = {10.1145/3123939.3124544},
+  abstract = {Many important applications trigger bulk bitwise operations, i.e., bitwise operations on large bit vectors. In fact, recent works design techniques that exploit fast bulk bitwise operations to accelerate databases (bitmap indices, BitWeaving) and web search (BitFunnel). Unfortunately, in existing architectures, the throughput of bulk bitwise operations is limited by the memory bandwidth available to the processing unit (e.g., CPU, GPU, FPGA, processing-in-memory).To overcome this bottleneck, we propose Ambit, an Accelerator-in-Memory for bulk bitwise operations. Unlike prior works, Ambit exploits the analog operation of DRAM technology to perform bitwise operations completely inside DRAM, thereby exploiting the full internal DRAM bandwidth. Ambit consists of two components. First, simultaneous activation of three DRAM rows that share the same set of sense amplifiers enables the system to perform bitwise AND and OR operations. Second, with modest changes to the sense amplifier, the system can use the inverters present inside the sense amplifier to perform bitwise NOT operations. With these two components, Ambit can perform any bulk bitwise operation efficiently inside DRAM. Ambit largely exploits existing DRAM structure, and hence incurs low cost on top of commodity DRAM designs (1\% of DRAM chip area). Importantly, Ambit uses the modern DRAM interface without any changes, and therefore it can be directly plugged onto the memory bus.Our extensive circuit simulations show that Ambit works as expected even in the presence of significant process variation. Averaged across seven bulk bitwise operations, Ambit improves performance by 32X and reduces energy consumption by 35X compared to state-of-the-art systems. When integrated with Hybrid Memory Cube (HMC), a 3D-stacked DRAM with a logic layer, Ambit improves performance of bulk bitwise operations by 9.7X compared to processing in the logic layer of the HMC. Ambit improves the performance of three real-world data-intensive applications, 1) database bitmap indices, 2) BitWeaving, a technique to accelerate database scans, and 3) bit-vector-based implementation of sets, by 3X-7X compared to a state-of-the-art baseline using SIMD optimizations. We describe four other applications that can benefit from Ambit, including a recent technique proposed to speed up web search. We believe that large performance and energy improvements provided by Ambit can enable other applications to use bulk bitwise operations.},
+  booktitle = {Proceedings of the 50th Annual IEEE/ACM International Symposium on Microarchitecture},
+  pages = {273–287},
+  numpages = {15},
+  keywords = {processing-in-memory, performance, memory bandwidth, energy, databases, bulk bitwise operations, DRAM},
+  location = {Cambridge, Massachusetts},
+  series = {MICRO-50 '17}
+}
+
+@INPROCEEDINGS{Samsung-PIM23,
+  author={Kim, Jin Hyun and Ro, Yuhwan and So, Jinin and Lee, Sukhan and Kang, Shin-haeng and Cho, YeonGon and Kim, Hyeonsu and Kim, Byeongho and Kim, Kyungsoo and Park, Sangsoo and Kim, Jin-Seong and Cha, Sanghoon and Lee, Won-Jo and Jung, Jin and Lee, Jong-Geon and Lee, Jieun and Song, JoonHo and Lee, Seungwon and Cho, Jeonghyeon and Yu, Jaehoon and Sohn, Kyomin},
+  booktitle={2023 IEEE Hot Chips 35 Symposium (HCS)}, 
+  title={Samsung PIM/PNM for Transfmer Based AI : Energy Efficiency on PIM/PNM Cluster}, 
+  year={2023},
+  volume={},
+  number={},
+  pages={1-31},
+  keywords={Energy efficiency;Artificial intelligence},
+  doi={10.1109/HCS59251.2023.10254711}}
+
+
+@ARTICLE{RISC-V,
+  author={Cui, Enfang and Li, Tianzheng and Wei, Qian},
+  journal={IEEE Access}, 
+  title={RISC-V Instruction Set Architecture Extensions: A Survey}, 
+  year={2023},
+  volume={11},
+  number={},
+  pages={24696-24711},
+  keywords={Instruction sets;Microprocessors;Computer architecture;Task analysis;Graphics processing units;Cloud computing;Artificial intelligence;RISC-V;instruction set architecture;extensions;survey},
+  doi={10.1109/ACCESS.2023.3246491}
+}
+
+@inproceedings{LLVM04,
+  author = {Lattner, Chris and Adve, Vikram},
+  title = {LLVM: A Compilation Framework for Lifelong Program Analysis \& Transformation},
+  year = {2004},
+  isbn = {0769521029},
+  publisher = {IEEE Computer Society},
+  address = {USA},
+  abstract = {This paper describes LLVM (Low Level Virtual Machine),a compiler framework designed to support transparent, lifelongprogram analysis and transformation for arbitrary programs,by providing high-level information to compilertransformations at compile-time, link-time, run-time, and inidle time between runs.LLVM defines a common, low-levelcode representation in Static Single Assignment (SSA) form,with several novel features: a simple, language-independenttype-system that exposes the primitives commonly used toimplement high-level language features; an instruction fortyped address arithmetic; and a simple mechanism that canbe used to implement the exception handling features ofhigh-level languages (and setjmp/longjmp in C) uniformlyand efficiently.The LLVM compiler framework and coderepresentation together provide a combination of key capabilitiesthat are important for practical, lifelong analysis andtransformation of programs.To our knowledge, no existingcompilation approach provides all these capabilities.We describethe design of the LLVM representation and compilerframework, and evaluate the design in three ways: (a) thesize and effectiveness of the representation, including thetype information it provides; (b) compiler performance forseveral interprocedural problems; and (c) illustrative examplesof the benefits LLVM provides for several challengingcompiler problems.},
+  booktitle = {Proceedings of the International Symposium on Code Generation and Optimization: Feedback-Directed and Runtime Optimization},
+  pages = {75},
+  location = {Palo Alto, California},
+  series = {CGO '04}
+}
+
+@article{NLP00,
+  title = "Book Reviews: Foundations of Statistical Natural Language Processing",
+  author = "Lee, Lillian",
+  journal = "Computational Linguistics",
+  volume = "26",
+  number = "2",
+  year = "2000",
+  address = "Cambridge, MA",
+  publisher = "MIT Press",
+  url = "https://aclanthology.org/J00-2011/"
+}
+
+@misc{CV17,
+  title={Large-Scale Evolution of Image Classifiers}, 
+  author={Esteban Real and Sherry Moore and Andrew Selle and Saurabh Saxena and Yutaka Leon Suematsu and Jie Tan and Quoc Le and Alex Kurakin},
+  year={2017},
+  eprint={1703.01041},
+  archivePrefix={arXiv},
+  primaryClass={cs.NE},
+  url={https://arxiv.org/abs/1703.01041}, 
+}
+
+@misc{Audio23,
+  title={Make-An-Audio: Text-To-Audio Generation with Prompt-Enhanced Diffusion Models}, 
+  author={Rongjie Huang and Jiawei Huang and Dongchao Yang and Yi Ren and Luping Liu and Mingze Li and Zhenhui Ye and Jinglin Liu and Xiang Yin and Zhou Zhao},
+  year={2023},
+  eprint={2301.12661},
+  archivePrefix={arXiv},
+  primaryClass={cs.SD},
+  url={https://arxiv.org/abs/2301.12661}, 
+}
+
+@misc{CNN15,
+  title={An Introduction to Convolutional Neural Networks}, 
+  author={Keiron O'Shea and Ryan Nash},
+  year={2015},
+  eprint={1511.08458},
+  archivePrefix={arXiv},
+  primaryClass={cs.NE},
+  url={https://arxiv.org/abs/1511.08458}, 
+}
+
+@inproceedings{translation22,
+  title = "Confidence Based Bidirectional Global Context Aware Training Framework for Neural Machine Translation",
+  author = "Zhou, Chulun  and
+    Meng, Fandong  and
+    Zhou, Jie  and
+    Zhang, Min  and
+    Wang, Hongji  and
+    Su, Jinsong",
+  editor = "Muresan, Smaranda  and
+    Nakov, Preslav  and
+    Villavicencio, Aline",
+  booktitle = "Proceedings of the 60th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)",
+  month = may,
+  year = "2022",
+  address = "Dublin, Ireland",
+  publisher = "Association for Computational Linguistics",
+  url = "https://aclanthology.org/2022.acl-long.206/",
+  doi = "10.18653/v1/2022.acl-long.206",
+  pages = "2878--2889",
+  abstract = "Most dominant neural machine translation (NMT) models are restricted to make predictions only according to the local context of preceding words in a left-to-right manner. Although many previous studies try to incorporate global information into NMT models, there still exist limitations on how to effectively exploit bidirectional global context. In this paper, we propose a Confidence Based Bidirectional Global Context Aware (CBBGCA) training framework for NMT, where the NMT model is jointly trained with an auxiliary conditional masked language model (CMLM). The training consists of two stages: (1) multi-task joint training; (2) confidence based knowledge distillation. At the first stage, by sharing encoder parameters, the NMT model is additionally supervised by the signal from the CMLM decoder that contains bidirectional global contexts. Moreover, at the second stage, using the CMLM as teacher, we further pertinently incorporate bidirectional global context to the NMT model on its unconfidently-predicted target words via knowledge distillation. Experimental results show that our proposed CBBGCA training framework significantly improves the NMT model by +1.02, +1.30 and +0.57 BLEU scores on three large-scale translation datasets, namely WMT`14 English-to-German, WMT`19 Chinese-to-English and WMT`14 English-to-French, respectively."
+}
+
+@article{RNN20,
+  title={Fundamentals of Recurrent Neural Network (RNN) and Long Short-Term Memory (LSTM) network},
+  volume={404},
+  ISSN={0167-2789},
+  url={http://dx.doi.org/10.1016/j.physd.2019.132306},
+  DOI={10.1016/j.physd.2019.132306},
+  journal={Physica D: Nonlinear Phenomena},
+  publisher={Elsevier BV},
+  author={Sherstinsky, Alex},
+  year={2020},
+  month=mar, pages={132306}
+}
+
+@ARTICLE{GNN09,
+  author={Scarselli, Franco and Gori, Marco and Tsoi, Ah Chung and Hagenbuchner, Markus and Monfardini, Gabriele},
+  journal={IEEE Transactions on Neural Networks}, 
+  title={The Graph Neural Network Model}, 
+  year={2009},
+  volume={20},
+  number={1},
+  pages={61-80},
+  keywords={Neural networks;Biological system modeling;Data engineering;Computer vision;Chemistry;Biology;Pattern recognition;Data mining;Supervised learning;Parameter estimation;Graphical domains;graph neural networks (GNNs);graph processing;recursive neural networks},
+  doi={10.1109/TNN.2008.2005605}
+}
+
+
+@misc{GAN14,
+  title={Generative Adversarial Networks}, 
+  author={Ian J. Goodfellow and Jean Pouget-Abadie and Mehdi Mirza and Bing Xu and David Warde-Farley and Sherjil Ozair and Aaron Courville and Yoshua Bengio},
+  year={2014},
+  eprint={1406.2661},
+  archivePrefix={arXiv},
+  primaryClass={stat.ML},
+  url={https://arxiv.org/abs/1406.2661}, 
+}
+
+@article{Memristive10,
+  title={'Memristive' switches enable 'stateful' logic operations via material implication},
+  author={Borghetti, Julien and Snider, Gregory S. and Kuekes, Philip J. and Yang, J. Joshua and Stewart, Duncan R. and Williams, R. Stanley},
+  journal={NATURE},
+  issue={7290},
+  pages={873-876},
+  year={2010},
+}
+
+@article{Intro23,
+  title={存内计算芯片研究进展及应用},
+  author={郭昕婕 and 王光燿 and 王绍迪},
+  journal={电子与信息学报},
+  issue={5},
+  pages={1888-1898},
+  year={2023},
+}
+
+@ARTICLE{RxNN21,
+  author={Jain, Shubham and Sengupta, Abhronil and Roy, Kaushik and Raghunathan, Anand},
+  journal={IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems}, 
+  title={RxNN: A Framework for Evaluating Deep Neural Networks on Resistive Crossbars}, 
+  year={2021},
+  volume={40},
+  number={2},
+  pages={326-338},
+  keywords={Computational modeling;Integrated circuit modeling;Hardware;Virtual machine monitors;Biological neural networks;Resistance;Sensors;Analog computing;artificial intelligence;crossbar modeling;crossbar nonidealities;deep neural networks (DNNs);in-memory computing;machine learning;nonvolatile memory;resistive crossbar;vector-matrix multiplication (VMM)},
+  doi={10.1109/TCAD.2020.3000185}
+}
+
+
+@INPROCEEDINGS{PRIME16,
+  author={Chi, Ping and Li, Shuangchen and Xu, Cong and Zhang, Tao and Zhao, Jishen and Liu, Yongpan and Wang, Yu and Xie, Yuan},
+  booktitle={2016 ACM/IEEE 43rd Annual International Symposium on Computer Architecture (ISCA)}, 
+  title={PRIME: A Novel Processing-in-Memory Architecture for Neural Network Computation in ReRAM-Based Main Memory}, 
+  year={2016},
+  volume={},
+  number={},
+  pages={27-39},
+  keywords={Artificial neural networks;Random access memory;Microprocessors;Acceleration;Biological neural networks;Memory management;processing in memory;neural network;resistive random access memory},
+  doi={10.1109/ISCA.2016.13}
+}
+
+@misc{Netron,
+  title = {netron},
+  publisher = {https://github.com/lutzroeder/netron},
+}
+
+@misc{ONNX,
+  title = {onnx},
+  publisher = {https://github.com/onnx/onnx},
+}
+
+@INPROCEEDINGS{yolov3-tiny20,
+  author={Adarsh, Pranav and Rathi, Pratibha and Kumar, Manoj},
+  booktitle={2020 6th International Conference on Advanced Computing and Communication Systems (ICACCS)}, 
+  title={YOLO v3-Tiny: Object Detection and Recognition using one stage improved model}, 
+  year={2020},
+  volume={},
+  number={},
+  pages={687-694},
+  keywords={Object detection;Detectors;Computational modeling;Proposals;Object recognition;Machine learning;Communication systems;Computer vision;YOLO v3;Faster RCNN;Deep learning;YOLO v3-Tiny;Object detection;image processing;Convolutional Neural Networks},
+  doi={10.1109/ICACCS48705.2020.9074315}
+}
+
+@inbook{PyTorch19,
+  author = {Paszke, Adam and Gross, Sam and Massa, Francisco and Lerer, Adam and Bradbury, James and Chanan, Gregory and Killeen, Trevor and Lin, Zeming and Gimelshein, Natalia and Antiga, Luca and Desmaison, Alban and K\"{o}pf, Andreas and Yang, Edward and DeVito, Zach and Raison, Martin and Tejani, Alykhan and Chilamkurthy, Sasank and Steiner, Benoit and Fang, Lu and Bai, Junjie and Chintala, Soumith},
+  title = {PyTorch: an imperative style, high-performance deep learning library},
+  year = {2019},
+  publisher = {Curran Associates Inc.},
+  address = {Red Hook, NY, USA},
+  abstract = {Deep learning frameworks have often focused on either usability or speed, but not both. PyTorch is a machine learning library that shows that these two goals are in fact compatible: it provides an imperative and Pythonic programming style that supports code as a model, makes debugging easy and is consistent with other popular scientific computing libraries, while remaining efficient and supporting hardware accelerators such as GPUs.In this paper, we detail the principles that drove the implementation of PyTorch and how they are reflected in its architecture. We emphasize that every aspect of PyTorch is a regular Python program under the full control of its user. We also explain how the careful and pragmatic implementation of the key components of its runtime enables them to work together to achieve compelling performance. We demonstrate the efficiency of individual subsystems, as well as the overall speed of PyTorch on several common benchmarks.},
+  booktitle = {Proceedings of the 33rd International Conference on Neural Information Processing Systems},
+  articleno = {721},
+  numpages = {12}
+}
+
+@inproceedings{TensorFlow16,
+  author = {Abadi, Mart\'{\i}n and Barham, Paul and Chen, Jianmin and Chen, Zhifeng and Davis, Andy and Dean, Jeffrey and Devin, Matthieu and Ghemawat, Sanjay and Irving, Geoffrey and Isard, Michael and Kudlur, Manjunath and Levenberg, Josh and Monga, Rajat and Moore, Sherry and Murray, Derek G. and Steiner, Benoit and Tucker, Paul and Vasudevan, Vijay and Warden, Pete and Wicke, Martin and Yu, Yuan and Zheng, Xiaoqiang},
+  title = {TensorFlow: a system for large-scale machine learning},
+  year = {2016},
+  isbn = {9781931971331},
+  publisher = {USENIX Association},
+  address = {USA},
+  abstract = {TensorFlow is a machine learning system that operates at large scale and in heterogeneous environments. Tensor-Flow uses dataflow graphs to represent computation, shared state, and the operations that mutate that state. It maps the nodes of a dataflow graph across many machines in a cluster, and within a machine across multiple computational devices, including multicore CPUs, general-purpose GPUs, and custom-designed ASICs known as Tensor Processing Units (TPUs). This architecture gives flexibility to the application developer: whereas in previous "parameter server" designs the management of shared state is built into the system, TensorFlow enables developers to experiment with novel optimizations and training algorithms. TensorFlow supports a variety of applications, with a focus on training and inference on deep neural networks. Several Google services use TensorFlow in production, we have released it as an open-source project, and it has become widely used for machine learning research. In this paper, we describe the TensorFlow dataflow model and demonstrate the compelling performance that TensorFlow achieves for several real-world applications.},
+  booktitle = {Proceedings of the 12th USENIX Conference on Operating Systems Design and Implementation},
+  pages = {265–283},
+  numpages = {19},
+  location = {Savannah, GA, USA},
+  series = {OSDI'16}
+}
