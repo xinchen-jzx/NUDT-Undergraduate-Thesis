@@ -174,7 +174,16 @@ IREE @IREE19：Google 于 2019 年发布的一个开源的通用编译和运行�
 
 3. 对实现的编译器进行功能测试和性能测试。功能测试方面，对预训练神经网络模型予以优化，并将其部署于 RISC-V 存算一体模拟器之上，以此验证编译器各个模块的功能；性能测试方面，聚焦于深度学习网络中常见算子，验证 NPU 在实际运行中的加速成效，确保其能在深度学习场景下有效提升运算效率，充分发挥加速优势。
 
+#pagebreak()
+
 == 论文的章节安排
+
+#figure(
+  image("./images/structure.png", width: 70%),
+  caption: [
+    研究内容框架图
+  ],
+) <Structure>
 
 全文共包含 $7$ 个章节，主要研究结构安排如@fig:Structure 所示：
 
@@ -191,13 +200,6 @@ IREE @IREE19：Google 于 2019 年发布的一个开源的通用编译和运行�
 第 $6$ 章为编译器测试与分析。本章通过实验对所实现编译器的整体功能进行了测试，通过部署神经网络模型对编译器的总体功能以及编译器生成后端代码的正确性进行了验证，同时选取了神经网络中比较常见的 20 种算子在 RISC-V 存算一体模拟器中评估 NPU 核心的性能表现。
 
 第 $7$ 章为工作总结与展望。对本文的研究工作进行了全面的盘点，系统梳理了研究成果。在此基础上，我们对编译器存在的不足进行了细致的剖析，并深入洞察了后续改进与完善的必要性，为后续提升工作锚定关键着力点。
-
-#figure(
-  image("./images/structure.png", width: 70%),
-  caption: [
-    研究内容框架图
-  ],
-) <Structure>
 
 #pagebreak()
 
@@ -530,14 +532,14 @@ ONNX 结构如@tbl:onnx-ir 所示，加载 ONNX 模型后，得到的是一个 `
 
 === 内存分配管理
 
+在智能识别出可加速的 LLVM IR 指令后，编译器需要为对应的输入张量在片上内存分配内存空间以便于加速器对计算数据的读写和操作，同时还要进行内存管理防止各张量之间地址冲突从而产生的数据覆盖。内存分配的流程如@fig:memory 所示，在识别出优化后的 LLVM IR 中的可加速范式之后，首先初始化 NPU 核心上的片上内存，然后遍历识别出的 LLVM IR 中的可加速范式，根据输入张量的不同形状，切换 CIM 加速器的寻址方式来选择最佳的加速阵列来加速对应的计算范式，同时选择一块片上内存来为其输入张量分配实际内存大小，每次分配时只需要把当前片上内存空间的地址指针作为该输入张量的首地址，同时利用底层 RISC-V 扩展指令将数据从片外内存传输到当前片上内存，然后根据张量大小对该片上内存地址指针叠加并更新，而分配的内存空间大小由张量自身的尺寸来维护，最后重复此操作以完成对可加速 LLVM IR 范式中的张量的内存分配工作。当该计算完成时，释放对应的片上内存，同时将对应的输出结果写回到片外内存，避免造成内存资源浪费。
+
 #figure(
   image("./images/memory.png", width: 60%),
   caption: [
     内存分配流程图
   ],
 ) <memory>
-
-在智能识别出可加速的 LLVM IR 指令后，编译器需要为对应的输入张量在片上内存分配内存空间以便于加速器对计算数据的读写和操作，同时还要进行内存管理防止各张量之间地址冲突从而产生的数据覆盖。内存分配的流程如@fig:memory 所示，在识别出优化后的 LLVM IR 中的可加速范式之后，首先初始化 NPU 核心上的片上内存，然后遍历识别出的 LLVM IR 中的可加速范式，根据输入张量的不同形状，切换 CIM 加速器的寻址方式来选择最佳的加速阵列来加速对应的计算范式，同时选择一块片上内存来为其输入张量分配实际内存大小，每次分配时只需要把当前片上内存空间的地址指针作为该输入张量的首地址，同时利用底层 RISC-V 扩展指令将数据从片外内存传输到当前片上内存，然后根据张量大小对该片上内存地址指针叠加并更新，而分配的内存空间大小由张量自身的尺寸来维护，最后重复此操作以完成对可加速 LLVM IR 范式中的张量的内存分配工作。当该计算完成时，释放对应的片上内存，同时将对应的输出结果写回到片外内存，避免造成内存资源浪费。
 
 === 计算逻辑管理
 
@@ -555,7 +557,7 @@ ONNX 结构如@tbl:onnx-ir 所示，加载 ONNX 模型后，得到的是一个 `
 
 == LLVM IR 与可加速范式
 
-当前基于 RISC-V 存算一体模拟器仅通过支持 RISC-V 向量、矩阵扩展指令集来进行加速计算，为了利用 RISC-V 存算一体加速器中的 NPU 核心来加速计算，编译器应该识别出 LLVM IR 中可以通过 NPU 核心加速的典型计算模式。尽管 CIM 加速器的应用场景越来越多，但 CIM 加速器可以加速的基本操作却非常有限。根据其底层硬件设计，我们识别出三种典型的可加速计算范式，即向量 - 向量操作（Vector-Vector Multiplications，VVM）、矩阵 - 向量操作（Matrix-Vector Multiplications，MVM）、矩阵 - 矩阵操作（Matrix-Matrix Multiplications，MMM），这几种计算范式都是通过比较复杂的循环策略来实现的。因此，为了实现这些可加速范式，本章对 LLVM IR 的循环结构进行深入分析，旨在剖析不同的加速范式所对应的循环结构的特征，从而为编译器智能识别出 NPU 加速指令提供关键依据，进而充分发挥 RISC-V 存算一体加速器中 NPU 核心的加速效能。
+当前基于 RISC-V 存算一体模拟器仅通过支持 RISC-V 向量、矩阵扩展指令集以及自定义扩展指令集来进行加速计算，为了利用 RISC-V 存算一体加速器中的 NPU 核心来加速计算，编译器应该识别出 LLVM IR 中可以通过 NPU 核心加速的典型计算模式。尽管 CIM 加速器的应用场景越来越多，但 CIM 加速器可以加速的基本操作却非常有限。根据其底层硬件设计，我们识别出三种典型的可加速计算范式，即向量 - 向量操作（Vector-Vector Multiplications，VVM）、矩阵 - 向量操作（Matrix-Vector Multiplications，MVM）、矩阵 - 矩阵操作（Matrix-Matrix Multiplications，MMM），这几种计算范式都是通过比较复杂的循环策略来实现的。因此，为了实现这些可加速范式，本章对 LLVM IR 的循环结构进行深入分析，旨在剖析不同的加速范式所对应的循环结构的特征，从而为编译器智能识别出 NPU 加速指令提供关键依据，进而充分发挥 RISC-V 存算一体加速器中 NPU 核心的加速效能。
 
 以矩阵 - 向量操作（MVM）为例，MVM 通常是由两层嵌套的循环来实现的，并且内循环体中的迭代语句与向量和矩阵相关。因此，为了识别出 MVM 计算范式，我们必须首先识别出两层嵌套循环的循环结构，然后识别出内层循环中两个向量之间的操作。
 
@@ -880,9 +882,9 @@ ONNX 结构如@tbl:onnx-ir 所示，加载 ONNX 模型后，得到的是一个 `
 
 静态指令调度是编译器优化过程中的关键技术之一，它在编译期间对指令序列进行重新排列组合，以优化程序的执行效率。静态指令调度通过分析指令之间的相关性和依赖关系，合理安排指令的执行顺序，目的是尽可能地减少数据相关性导致的处理单元等待时间、充分发挥处理器的指令级并行性，从而提高硬件资源的利用率并减少程序的总体执行时间。常用的静态指令调度算法包括基于依赖图的调度算法和基于启发式规则的调度算法等。
 
-=== 表调度算法
+本文基于表调度（List Scheduling）设计了一种的静态指令调度策略，以在异构处理系统中提升 CPU 与 NPU 之间的并行执行效率，目标是在编译阶段提前发射可独立执行的 NPU 指令，以减少 CPU 的空转等待时间。该策略在 LLVM 后端的指令调度阶段引入，核心思想是：尽可能将不依赖 CPU 结果的 NPU 指令提前调度至程序片段的前部，从而使得 NPU 能够尽早启动执行，减少 CPU 在等待 NPU 执行完成过程中的空转时间。为确保调度的正确性与通用性，我们基于经典的表调度算法作为基础框架，并在其上引入了 NPU 指令优先的调度规则。
 
-本文编译器采用表调度（List Scheduling）算法作为核心调度策略。表调度算法是一种融合了贪心策略与启发式规则的调度方法，主要用于对基本块内的各类指令操作进行合理调度，凭借其实用性及高效性，已成为基本块内指令调度领域的常见且关键方法之一。基于基本块的指令调度方式，其优势在于无需过多考量程序的控制流，而是将重点聚焦于数据依赖关系、目标体系结构的指令延迟特性、硬件资源的分配情况以及流水线的工作状态等多方面信息，从而实现对指令的精准调度。
+表调度算法是一种融合了贪心策略与启发式规则的调度方法，主要用于对基本块内的各类指令操作进行合理调度，凭借其实用性及高效性，已成为基本块内指令调度领域的常见且关键方法之一。基于基本块的指令调度方式，其优势在于无需过多考量程序的控制流，而是将重点聚焦于数据依赖关系、目标体系结构的指令延迟特性、硬件资源的分配情况以及流水线的工作状态等多方面信息，从而实现对指令的精准调度。
 
 表调度算法的核心思想主要体现在以下几个方面：构建并维护一个用于存放已具备执行条件指令的 `ready` 列表，以及一个用于跟踪正在执行指令的 `active` 列表。其中，`ready` 列表的生成主要依据数据依赖约束条件以及硬件资源的相关信息。在调度过程中，以周期为单位，按照既定的调度算法执行一系列操作，包括从列表中甄选合适指令进行调度，以及及时更新列表中的指令状态信息，以确保整个调度流程的连贯性与准确性。
 
@@ -896,93 +898,68 @@ ONNX 结构如@tbl:onnx-ir 所示，加载 ONNX 模型后，得到的是一个 `
 
 值得关注的是，在实际的指令调度执行过程中，当遇到具有相同优先级的多条指令时，由于不同的调度方案选择，可能会导致不同的调度结果。为应对这种情况，可以通过引入额外的度量标准，进一步优化优先级的计算方案，从而提高调度结果的合理性与有效性。尽管表调度方法在理论上无法绝对保证得到最优的调度结果，但凭借其独特的调度策略与启发式规则，往往能够获取到接近最优解的调度方案，展现出较高的实用价值与应用潜力。
 
-=== 用例
+基于上述经典的表调度算法作为基础框架，本文在其上引入了 NPU 指令优先的调度规则。该调度算法主要分为两部分：
+1. 调度候选生成：
+  - 构建 DAG（有向无环图）表示基本块中所有机器指令；
+  - 计算每条指令的依赖关系（数据依赖和调度顺序约束）；
+  - 对于所有入度为 0 的指令（无前驱），将其加入就绪队列（ready list）。
+2. 调度选择逻辑（核心）：
+  - 每次从 ready list 中选择一条指令调度；
+  - 若存在无依赖的 NPU 指令，优先调度该 NPU 指令；
+  - 否则，采用标准的表调度优先级策略进行调度（如critical path、latency、资源利用等）。
 
-假设当前 CPU 有两个计算单元，即每个周期可以执行两条指令。加法指令的 latency 为 2 cycles，其他指令为 1 cycle。以下面代码为例。
+#h(2em) 本调度算法以传统的表调度（List Scheduling）为基础，引入了如下关键优化：
+1. NPU 优先策略：在每个调度周期中，优先尝试选择无数据依赖的 NPU 指令进行调度，确保 NPU 核心尽早获得任务并启动；
+2. 异构并发优化：通过将 NPU 指令提前，CPU 能够更早进入其独立执行路径，从而最大化利用两种处理器资源；
+3. 可扩展性强：该策略保持了表调度的模块化结构，可与现有 LLVM 调度器兼容。
 
-#let t5-4 = table(
-  columns: 1,
-  [
-    ```c
-    r0: a = 1;
-    r1: f = a + x;
-    r2: b = 7;
-    r3: c = 9;
-    r4: g = f + d;
-    r5: d = 13;
-    r6: e = 19;
-    r7: h = f + c;
-    r8: j = d + y;
-    r9: z = -1;
-    r10: JMP L1;
-    ```
-  ],
-)
+#h(2em) 本调度算法伪代码如下：
 
-#align(
-  center,
-  [
-    #t5-4
-  ],
-)
+#algo(
+  title: "SheduleInstructions",
+  parameters: ("DAG",)
+)[
+  readyList = [] #comment[当前准备好可以调度的指令]\
+  sheduledList = [] #comment[已调度的指令列表]\
+  pendingNPU = [] #comment[可提前调度的 NPU 指令候选]\
+  \
+  for SU in DAG.SUnits:#i #comment[初始化 readyList]\
+    if SU.NumPredsLeft == 0:#i\
+      readyList.append(SU)#d#d\
+  \
+  while readyList!=[] || pendingNPU !=[]:#i \
+    nextSU = null \
 
-#h(2em)（1）根据数据依赖关系构建出依赖关系图。如@fig:Example-Schedule 所示。
-
-#figure(
-  image("./images/Example-Schedule.png", width: 50%),
-  caption: [
-    依赖关系图
-  ],
-) <Example-Schedule>
-
-（2）计算指令节点的优先级。
-
-#figure(
-  image("./images/Example-Schedule-2.png", width: 50%),
-  caption: [
-    计算指令节点的优先级
-  ],
-) <Example-Schedule-2>
-
-（3）执行调度。
-
-#figure(
-  table(
-  columns: 2,
-  stroke: (x: none),
-  align: horizon,
-
-  [r0],
-  [r2],
-
-  [*r1*],
-  [r5],
-
-  [r3],
-  [*r8*],
-
-  [*r4*],
-  [*r7*],
-
-  [r6],
-  [r9],
-
-  [r10],
-  [...],
-), caption: [指令静态调度]
-) <Schedule>
+    for SU in readyList:#i #comment[优先调度无依赖的 NPU 指令]\
+      if isNPUInst(SU.Instr):#i \
+        if !hasCPUDependency(SU): #i \
+          nextSU = SU \
+          break #d \
+    #d#d\
+  if nextSU == null:#i\
+    nextSU = selectBest(readyList)#d \
+  \
+  emitInstruction(nextSU.Instr) \
+  sheduledList.append(nextSU) \
+  readyList.remove(nextSU) \
+  \
+  for succ in nextSU.Successors:#i #comment[更新依赖关系]\
+    succ.NumPredsLeft -= 1 \
+    if succ.NumPredsLeft == 0:#i \
+      readyList.append(succ)
+]
 
 == 动态指令调度
 
 所谓静态指令调度就是在编译阶段由编译器实现的指令调度，目的是通过调度尽量地减少程序执行时由于数据相关而导致的流水线暂停即处理器空转。所以静态指令调度方法也叫做编译器调度法。由于在编译阶段程序并没有真正执行，有一些相关可能未被发现，这是静态指令调度根本无法解决的问题。
 
-修改后的 LLVM IR 可以进一步编译为二进制可执行文件，然后在基于 RISC-V 存算一体模拟器中执行，初始阶段，所有的指令和数据均统一存储在主存储器里。当程序启动并开始运行时，CPU 便承担起指令调度的重任。
+修改后的 LLVM IR 可进一步被编译为适用于 RISC-V 架构的二进制可执行文件，并在基于存算一体结构的模拟器上执行。在程序初始阶段，所有指令和数据统一被存储于主存储器中。当程序启动并开始运行时，CPU 便负责指令的获取、调度和执行管理，特别是在异构计算环境下，承担调度 CPU 与 NPU 指令的关键角色。
 
-对于 CIM 加速指令，它们会被识别并从常规指令流中分离出来，随后卸载到专门的 NPU 上进行高效执行。而除 CIM 加速指令之外的其他普通指令，则依然按照传统的执行流程，由 CPU 本身负责一步步完成。
+在指令执行过程中，系统会识别出特定的 CIM 加速指令，并将其从常规的 CPU 指令流中分离出来。这些指令被卸载至专用的 NPU 上执行，以实现更高的计算并行度和能效比。而其余常规的控制流、逻辑判断或轻量级算术操作等普通指令，仍由 CPU 按照顺序执行。
 
-在 CIM 加速指令于 NPU 上执行完毕之后，所产生的计算结果会及时地返回给 CPU。CPU 收到这些结果后，会进一步将其发送回主存储器中，以便后续程序阶段的调用和使用。
+在 CIM 加速指令于 NPU 上执行完毕之后，其结果通过总线返回至 CPU。CPU 负责将这些结果同步写回主存储器，以供后续程序阶段访问与使用。该机制确保了计算结果的一致性和数据访问的可预测性。
 
-为了确保 CPU 与 NPU 之间的协同工作能够高效且准确地进行，我们在系统中引入了同步指令（Synchronous Instruction）。当应用程序调用 CIM 加速指令时，就如同调用本地的一个普通函数一般，程序的执行流程会在该加速指令处等待。只有当 NPU 上的 CIM 加速指令执行完成，并且相关的结果数据安全地回传至 CPU 之后，程序才会从等待状态中恢复，继续向下执行后续的指令。
+为了确保 CPU 与 NPU 之间的高效协作与数据一致性，我们在系统中引入了同步指令（Synchronous Instruction）。当应用程序调用 CIM 加速指令时，就如同调用本地的一个普通函数一般，程序的执行流程会在该加速指令处等待。只有当 NPU 上的 CIM 加速指令执行完成，并且相关的结果数据安全地回传至 CPU 之后，程序才会从等待状态中恢复，继续向下执行后续的指令。这种设计可有效避免 CPU 和 NPU 之间的数据竞争问题，保证程序语义正确性。
 
 通过这种设计，有效地避免了 CPU 和 CIM 加速器之间可能出现的数据竞争问题。一方面，保证了整个程序执行过程的正确性和数据的一致性；另一方面，充分发挥了 CIM 加速器在特定计算任务上的性能优势，提升了整个系统的运行效率。
 
@@ -1003,14 +980,14 @@ ONNX 结构如@tbl:onnx-ir 所示，加载 ONNX 模型后，得到的是一个 `
 
 = 编译器测试与分析
 
-本文在第 3 章从编译器前端、中端以及后端介绍了基于 RISC-V 存算一体加速器设计的编译器的总体架构，分别在第 4 章和第 5 章着重介绍了如何智能识别 NPU 加速指令以及指令调度，来充分发挥存算一体的优势。本章主要在 RISC-V 存算一体模拟器上对深度学习网络中常见的算子开展功能性验证和性能测试，并选取自定义的 FASHION MNIST 网络模型作为实例，同时呈现最终的测试结果。
+本文在第 3 章从编译器前端、中端以及后端介绍了基于 RISC-V 存算一体加速器设计的编译器的总体架构，分别在第 4 章和第 5 章着重介绍了如何智能识别 NPU 加速指令以及指令调度，来充分发挥存算一体架构的优势。本章主要在 RISC-V 存算一体模拟器上对深度学习网络中常见的算子开展功能性验证和性能测试，并选取自定义的 FASHION MNIST 网络模型作为实例，来呈现最终的测试结果。
 
 == 编译器功能测试
 
 FASHION-MNIST@Fashion-MNIST17 是由 Zalando 研究团队提供的图像数据集，用于替代传统的 MNIST@MNIST12 手写数字集。该数据集包含了来自 $10$ 个不同类别的共 $70000$ 张商品正面图片，涵盖了各种类型的服装和配饰。FASHION-MNIST 在数据规模、格式规范以及训练集与测试集的划分比例上，均与原始的 MNIST 数据集保持高度一致，其中训练集包含 $60000$ 张图像，测试集包含 $10000$ 张图像，所有图片均为 $28 times 28$ 像素的灰度图像。
 
 #figure(
-  image("./images/onnx-model.png", width: 100%),
+  image("./images/ONNX-Display.png", width: 80%),
   caption: [
     网络架构图
   ],
@@ -1105,16 +1082,16 @@ FASHION-MNIST@Fashion-MNIST17 是由 Zalando 研究团队提供的图像数据�
   [
     ```txt
     * * * * Performance Analysis * * * * 
-    NPU work ratio: 95%
-      Off-chip Transfer ratio: 65%
-      Tensor Manipulate ratio: 3%
-      Matrix Processing ratio: 15%
-      Vector Processing ratio: 16%
-    CIM Analysis:
-      CIM Compute ratio: 6.0%
+    NPU work ratio: 61%
+      Off-chip Transfer ratio: 41%
+      Tensor Manipulate ratio: 2%
+      Matrix Processing ratio: 9%
+      Vector Processing ratio: 11%
+    CIM Analysis
+      CIM Compute ratio: 3.7%
       CIM Space Utilization: 69.9%
-      CIM Utilization: 4.2%
-      Effective Performance: 42.804GOPS @INint8-Wint8
+      CIM Utilization: 2.6%
+      Effective Performance: 26.739GOPS @INint8-Wint8
     ```
   ],
 )
@@ -1127,15 +1104,15 @@ FASHION-MNIST@Fashion-MNIST17 是由 Zalando 研究团队提供的图像数据�
 )
 
 #figure(
-  image("./plot/npu_work.svg", width: 100%),
+  image("./images/npu_work.svg", width: 100%),
   caption: [
     NPU 工作占比
   ],
 ) <NPU-work>
 
-从性能分析结果来看，我们发现在此次推理过程中 NPU 的工作比例达到了 $95%$，矩阵处理占比 $15%$，向量处理占比 $16%$，二者合计占比 $31%$，Tensor Manipulate 占比 $3%$，这表明编译器能够有效地识别、映射中间表示到指定的张量、向量等 RISC-V 扩展指令，以通过 NPU 核心加速，并根据程序依赖生成必要的同步指令在保证 CPU 和 NPU 协同计算的正确性的同时挖掘计算的并发性，体现了编译器在指令调度和资源分配方面的良好性能。关于 Tensor Manipulate 占比之所以这么低，是因为在底层硬件设计中 Tensor Manipulate 表示的操作是片上内存之间的数据搬运，而在推理过程中片上存储之间的数据搬运很少，所以 Tensor Manipulate 的占比很低。然而，片上片外数据传输（Off-Chip Transfer）比例却占据了 $65%$，成为 NPU 内部最大耗时环节，凸显“内存墙”问题。此现象与 RISC-V 存算一体芯片的层次化存储架构相关。当我们将某些计算卸载到 CIM 加速器的 NPU 核心进行加速计算时，我们需要把对应的参数的权重、偏置等等从片外内存传输到片上内存，成为影响系统整体性能的关键瓶颈。特别是该 FASHION MNIST 网络模型最后两层都是全连接层，性能受限于该全连接层的权重搬运。
+从性能分析结果来看，我们发现在此次推理过程中 NPU 的工作比例达到了 $61%$，矩阵处理占比 $9%$，向量处理占比 $11%$，二者合计占比 $20%$，Tensor Manipulate 占比 $2%$，这表明编译器能够有效地识别、映射中间表示到指定的张量、向量等 RISC-V 扩展指令，以通过 NPU 核心加速，并根据程序依赖生成必要的同步指令在保证 CPU 和 NPU 协同计算的正确性的同时挖掘计算的并发性，体现了编译器在指令调度和资源分配方面的良好性能。关于 Tensor Manipulate 占比之所以这么低，是因为在底层硬件设计中 Tensor Manipulate 表示的操作是片上内存之间的数据搬运，而在推理过程中片上存储之间的数据搬运很少，所以 Tensor Manipulate 的占比很低。然而，片上片外数据传输（Off-Chip Transfer）比例却占据了 $41%$，成为 NPU 内部最大耗时环节，凸显“内存墙”问题。此现象与 RISC-V 存算一体芯片的层次化存储架构相关。当我们将某些计算卸载到 CIM 加速器的 NPU 核心进行加速计算时，我们需要把对应的参数的权重、偏置等等从片外内存传输到片上内存，成为影响系统整体性能的关键瓶颈。特别是该 FASHION MNIST 网络模型最后两层都是全连接层，性能受限于该全连接层的权重搬运。
 
-在存算一体（CIM）相关分析中，CIM 计算比例仅为 $6.0%$，利用率仅为 $4.2%$，这主要是因为片上片外数据传输（Off-Chip Transfer）比例占据了 $65%$，特别是该 FASHION MNIST 网络模型最后两层都是全连接层，性能受限于该全连接层的权重搬运，所以 CIM 的计算比例和利用率很低。CIM 空间利用率达到了 69.9%，这一数值表明 CIM 内部存储空间的利用率处于一个相对合理的水平，编译器后端内存分配管理充分利用了 CIM 的存储资源，减少了不必要的存储冗余。CIM 有效性能为 $42.8$ GOPS \@INint8 - Wint8，在 INT8 量化下，NPU 实现了 $42.8$ GOPS 有效算力。
+在存算一体（CIM）相关分析中，CIM 计算比例仅为 $3.70%$，利用率仅为 $2.60%$，这主要是因为片上片外数据传输（Off-Chip Transfer）比例占据了 $41%$，特别是该 FASHION MNIST 网络模型最后两层都是全连接层，性能受限于该全连接层的权重搬运，所以 CIM 的计算比例和利用率很低。CIM 空间利用率达到了 $69.90%$，这一数值表明 CIM 内部存储空间的利用率处于一个相对合理的水平，编译器后端内存分配管理充分利用了 CIM 的存储资源，减少了不必要的存储冗余。CIM 有效性能为 $26.74$ GOPS \@INint8 - Wint8，在 INT8 量化下，NPU 实现了 $26.74$ GOPS 有效算力。
 
 #let t6-2 = table(
   columns: 1,
@@ -1144,21 +1121,21 @@ FASHION-MNIST@Fashion-MNIST17 是由 Zalando 研究团队提供的图像数据�
     * * * * Power Analysis * * * *
     - - - - NPU Level - - - - 
       Spad R/W energy cost: 3491064.32pJ, ratio:44%
-      PE vector energy cost: 0.0pJ, ratio:0%
+      PE vector energy cost: 1.11pJ, ratio:0%
       CIM R/W energy cost: 1295134.72pJ, ratio:16%
       CIM compute energy cost: 3120578.56pJ, ratio:39%
-      NPU energy cost: 7906777.6pJ
+      NPU energy cost: 7906778.71pJ
       CIM Compute Energy Efficiency: 12.5TOPS/W
       NPU Energy Efficiency: 4.93TOPS/W @INint8-Wint8
     - - - - System Level - - - - 
       NPU ENERGY
-        NPU energy cost: 7906777.6pJ, ratio:9%
+        NPU energy cost: 7906778.71pJ, ratio:9%
       CPU ENERGY
         CPU energy cost: 0pJ, ratio:0%
       Off-chip ENERGY
         pSRAM energy cost: 75476480pJ, ratio:91%
       Energy Efficiency
-        Total energy cost: 83383257.6pJ
+        Total energy cost: 83383258.71pJ
         Total Energy Efficiency: 0.47TOPS/W @INint8-Wint8
     ```
   ],
@@ -1171,9 +1148,59 @@ FASHION-MNIST@Fashion-MNIST17 是由 Zalando 研究团队提供的图像数据�
   ],
 )
 
-#h(2em) 在能效分析方面，于 NPU 级别，Spad R/W 能量成本占比最高，达到了 $44%$，Scratchpad 频繁读写与高片上片外数据传输占比（Off-Chip Transfer）形成了因果关系，这凸显了芯片内部存储单元的读写操作对能量消耗的显著影响，这提示我们在未来的编译器优化过程中，需要重点关注如何降低 Spad 的读写频率或优化其读写策略，以减少这部分的能量开销。CIM R/W 能量成本占比为 $16%$，CIM 计算能量成本占比为 $39%$，这表明 CIM 的能量消耗主要集中在计算过程以及数据的读写操作上，这也与 CIM 的工作原理和特点相符合。CIM 计算能效为 $12.5$ TOPS/W，而 NPU 能效为 $4.93$ TOPS/W \@INint8 - Wint8，相比之下，CIM 在能效方面表现出了一定的优势，这也进一步证明了存算一体架构在能效提升方面的潜力，但同时也需要注意到整个 NPU 的能效还有较大的提升空间，需要综合考虑编译器的优化策略以及硬件架构的改进来进一步提高能效。
+#h(2em) 在能效分析方面，于 NPU 级别，Spad R/W 能量成本占比最高，达到了 $44%$，Scratchpad 频繁读写与高片上片外数据传输占比（Off-Chip Transfer）形成了因果关系，这凸显了芯片内部存储单元的读写操作对能量消耗的显著影响，这提示我们在未来的编译器优化过程中，需要重点关注如何降低 Spad 的读写频率或优化其读写策略，以减少这部分的能量开销。CIM R/W 能量成本占比为 $16%$，CIM 计算能量成本占比为 $39%$，这表明 CIM 的能量消耗主要集中在计算过程以及数据的读写操作上，这也与 CIM 的工作原理和特点相符合。CIM 计算能效为 $12.50$ TOPS/W，而 NPU 能效为 $4.93$ TOPS/W \@INint8 - Wint8，相比之下，CIM 在能效方面表现出了一定的优势，这也进一步证明了存算一体架构在能效提升方面的潜力，但同时也需要注意到整个 NPU 的能效还有较大的提升空间，需要综合考虑编译器的优化策略以及硬件架构的改进来进一步提高能效。
 
-在系统级别，NPU 的能量成本占比为 $9%$，而片上片外内存传输（Off-Chip）的能量成本占比高达 $91%$，这再次凸显了片上片外数据传输对系统整体能量消耗的主导地位，这一结果与性能分析中的片上片外数据传输占比（Off-Chip Transfer）比例较高的现象相呼应，进一步强调了减少片上片外数据传输对于提升系统能效的重要性。整个系统的总能量成本为 $83383257.6$ pJ，总能效仅为 $0.47$ TOPS/W \@INint8 - Wint8，这一较低的系统能效值凸显片上片外数据传输对能效的毁灭性影响，需硬件-编译器协同设计：如采用3D堆叠内存等等。
+在系统级别，NPU 的能量成本占比为 $9%$，而片上片外内存传输（Off-Chip）的能量成本占比高达 $91%$，这再次凸显了片上片外数据传输对系统整体能量消耗的主导地位，这一结果与性能分析中的片上片外数据传输占比（Off-Chip Transfer）比例较高的现象相呼应，进一步强调了减少片上片外数据传输对于提升系统能效的重要性。整个系统的总能量成本为 $83383258.71$ pJ，总能效仅为 $0.47$ TOPS/W \@INint8 - Wint8，这一较低的系统能效值凸显片上片外数据传输对能效的毁灭性影响，需硬件-编译器协同设计：如采用3D堆叠内存等等。
+
+#let t6-4 = table(
+  columns: 1,
+  [
+    ```txt
+    * * * * Hardware Traces * * * *
+    Traces of Control:
+      Syncs=0;SW_CIMCs=4;WR_LMEMs=0;RD_LMEMs=0;Working Time=4
+    Traces of Tensor Load:
+      Configs=840;Loads=120;Working Time=295670
+    Traces of Tensor Store:
+      Configs=0;Stores=0;Working Time=0
+    Traces of Tensor Manipulate:
+      Configs=1211;Broadcasts=0;Moves=1524;Transposes=0
+      Working Time=13199
+    Traces of Matrix Processing:
+      Configs=1331;Prepares=121;Convs=121;Dwconvs=0
+      Working Time=66516
+    Traces of Vector Processing:
+      Configs=4334;Prepares=3493;VVVs=725;VSVs=4115;VSs=2;VVs=4061
+      Working Time=79577
+    Traces of Spad0:
+      Total Reads=7670;Total Writes=7212
+    Traces of Spad1:
+      Total Reads=19620;Total Writes=21488
+    Traces of Spad2:
+      Total Reads=12552;Total Writes=8872
+    Traces of Spad3:
+      Total Reads= 7696;Total Writes=6148
+    Traces of CIM Cluster4:
+      Total Reads=0;Total Writes=28745
+      Total Page Reads=121;Total Computes=1248231424
+    Traces of PE Tensor:
+      Total Computes=0
+    Traces of PE Vector:
+      Total Computes=44148
+    Traces of MainMem:
+      Total Reads=29483;Total Writes=0
+    ```
+  ],
+)
+
+#align(
+  center,
+  [
+    #t6-4
+  ],
+)
+
+#pagebreak()
 
 == 编译器性能测试
 

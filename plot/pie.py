@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 
 labels = ['Off-chip Transfer', 'Tensor Manipulate', 'Matrix Processing', 'Vector Processing', 'Other']
-sizes = [65, 3, 15, 16, 1]
+sizes = [41, 2, 9, 11, 37]
 
 # Create the pie chart
 plt.figure(figsize=(6, 6))
@@ -10,7 +10,7 @@ plt.pie(
     labels=labels,
     autopct='%1.0f%%',
     shadow=False,
-    startangle=90,
+    # startangle=90,
     textprops={'fontsize': 18}  # 设置字体大小
 )
 
